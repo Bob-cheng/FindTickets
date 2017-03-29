@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">查票助手</string>
+    <string name="sign_in">登  录</string>
+    <string name="username_hint">请输入用户名</string>
+    <string name="passwd_hint">请输入密码</string>
+    <string name="login_sign_up"><u>没有账号？点击注册</u></string>
+    <string name="email_hint">请输入邮箱地址</string>
+    <string name="passwd_again">请重复密码</string>
+    <string name="sign_up">注  册</string>
+    <string name="back_to_signin"><u>已经注册？点击登录</u></string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+</resources>
