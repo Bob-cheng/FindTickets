@@ -13,14 +13,16 @@ import android.widget.EditText;
 
 
 public class SignInActivity extends AppCompatActivity {
-
+    private EditText username;
+    private EditText password;
+    private ConstraintLayout activitymain;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        EditText username = (EditText)findViewById(R.id.username);
-        EditText password = (EditText)findViewById(R.id.passwd);
-        ConstraintLayout activitymain = (ConstraintLayout) findViewById(R.id.activity_main);
+        username = (EditText)findViewById(R.id.username);
+        password = (EditText)findViewById(R.id.passwd);
+        activitymain = (ConstraintLayout) findViewById(R.id.activity_main);
         activitymain.setFocusable(true);
         activitymain.setFocusableInTouchMode(true);
         activitymain.requestFocus();

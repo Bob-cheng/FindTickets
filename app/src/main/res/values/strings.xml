@@ -8,8 +8,19 @@
     <string name="passwd_again">请重复密码</string>
     <string name="sign_up">注  册</string>
     <string name="back_to_signin"><u>已经注册？点击登录</u></string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_check">查票</string>
+    <string name="title_history">历史</string>
+    <string name="check_date">出发日期</string>
+    <string name="check_start">出发地</string>
+    <string name="check_end">目的地</string>
+    <string name="check_traintype">车辆类型</string>
+    <string name="train1">动车</string>
+    <string name="train2">高铁</string>
+    <string name="train3">快速</string>
+    <string name="train4">特快</string>
+    <string name="train5">直达</string>
+
+
+
+
 </resources>

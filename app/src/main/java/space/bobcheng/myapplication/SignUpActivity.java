@@ -13,20 +13,25 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class SignUpActivity extends AppCompatActivity {
-
+    private EditText username;
+    private EditText email;
+    private EditText passwd;
+    private EditText passwd_again;
+    private TextView backToSignIn;
+    private ConstraintLayout root_layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-        ConstraintLayout root_layout = (ConstraintLayout)findViewById(R.id.root_layout);
+        root_layout = (ConstraintLayout)findViewById(R.id.root_layout);
         root_layout.setFocusable(true);
         root_layout.setFocusableInTouchMode(true);
         root_layout.requestFocus();
-        EditText username = (EditText)findViewById(R.id.user_name);
-        EditText email = (EditText)findViewById(R.id.email);
-        EditText passwd = (EditText)findViewById(R.id.passwd);
-        EditText passwd_again = (EditText)findViewById(R.id.passwd_again);
-        TextView backToSignIn = (TextView)findViewById(R.id.sign_in);
+        username = (EditText)findViewById(R.id.user_name);
+        email = (EditText)findViewById(R.id.email);
+        passwd = (EditText)findViewById(R.id.passwd);
+        passwd_again = (EditText)findViewById(R.id.passwd_again);
+        backToSignIn = (TextView)findViewById(R.id.sign_in);
 
         View.OnFocusChangeListener  focusChangeListener  = new View.OnFocusChangeListener() {
             @Override

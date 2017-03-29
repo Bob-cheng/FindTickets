@@ -1,0 +1,63 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="space.bobcheng.myapplication.CheckFragment">
+
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="35dp"
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
+        android:id="@+id/textInputLayout2">
+
+        <EditText
+            android:id="@+id/check_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/check_start" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="@+id/textInputLayout2"
+        app:layout_constraintLeft_toLeftOf="@+id/textInputLayout2"
+        android:id="@+id/textInputLayout"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginBottom="56dp"
+        app:layout_constraintBottom_toTopOf="@+id/start_date">
+
+        <EditText
+            android:id="@+id/check_end"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/check_end"
+            tools:layout_editor_absoluteX="25dp"
+            tools:layout_editor_absoluteY="97dp" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <EditText
+        android:id="@+id/start_date"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ems="10"
+        android:hint="@string/check_date"
+        android:inputType="date"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="189dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/textInputLayout"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/textInputLayout" />
+
+</android.support.constraint.ConstraintLayout>
