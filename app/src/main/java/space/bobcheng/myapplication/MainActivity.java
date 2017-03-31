@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
     private TextView title;
     private BottomNavigationView navigation;
     private ViewPager mViewpager;
-    private ArrayList<Fragment> mViews = new ArrayList<Fragment>();
+    private ArrayList<Fragment> mViews = new ArrayList<>();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
