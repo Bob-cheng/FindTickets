@@ -1,5 +1,5 @@
 
-package space.bobcheng.myapplication.jsonPackage;
+package space.bobcheng.myapplication.jsonClass;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

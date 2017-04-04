@@ -46,6 +46,7 @@ public class CheckFragment extends Fragment {
     private ArrayList<String> inputMessage = new ArrayList<>();
     private String ticket_type = "ADULT";
     public static final String INPUTS = "INPUTS";
+    private boolean first = true;
 
     public CheckFragment() {
         // Required empty public constructor
@@ -115,7 +116,11 @@ public class CheckFragment extends Fragment {
         start_place.setOnFocusChangeListener(loseFcloseKey);
         end_place.setOnFocusChangeListener(loseFcloseKey);
 
-        setTimeText(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
+        if(first){
+            setTimeText(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
+            first = false;
+        }
+
         start_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

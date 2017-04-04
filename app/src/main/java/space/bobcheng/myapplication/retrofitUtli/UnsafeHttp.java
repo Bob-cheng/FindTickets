@@ -1,4 +1,4 @@
-package space.bobcheng.myapplication;
+package space.bobcheng.myapplication.retrofitUtli;
 
 import java.security.cert.CertificateException;
 
@@ -13,7 +13,7 @@ import okhttp3.OkHttpClient;
  * Created by bob on 17-4-4.
  */
 
-class UnsafeHttp {
+public class UnsafeHttp {
     public static OkHttpClient getUnsafeOkHttpClient() {
         try {
             // Create a trust manager that does not validate certificate chains

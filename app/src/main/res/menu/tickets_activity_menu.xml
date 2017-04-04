@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:contexts=".TicketsActivity">
+    <item
+        android:id="@+id/add_to_history"
+        android:title="加入监听"
+        />
+
+</menu>
