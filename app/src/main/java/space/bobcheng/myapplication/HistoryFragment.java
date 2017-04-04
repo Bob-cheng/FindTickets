@@ -51,12 +51,12 @@ public class HistoryFragment extends Fragment {
         addhistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainAct.changeFragment();
+                mainAct.onChangeFragment();
             }
         });
     }
 
     interface MyCallback{
-        void changeFragment();
+        void onChangeFragment();
     }
 }

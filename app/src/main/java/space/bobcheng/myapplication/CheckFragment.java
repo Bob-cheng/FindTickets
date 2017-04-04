@@ -3,6 +3,7 @@ package space.bobcheng.myapplication;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -44,6 +45,7 @@ public class CheckFragment extends Fragment {
     private Calendar chose = Calendar.getInstance();
     private ArrayList<String> inputMessage = new ArrayList<>();
     private String ticket_type = "ADULT";
+    public static final String INPUTS = "INPUTS";
 
     public CheckFragment() {
         // Required empty public constructor
@@ -193,9 +195,18 @@ public class CheckFragment extends Fragment {
                     inputMessage.add(ticket_type);
                     Log.i("finalmessage", inputMessage.get(0)+" "+inputMessage.get(1)+
                             " "+inputMessage.get(2)+" "+inputMessage.get(3));
+                    launchTicketsActivity();
+
                 }
             }
         });
+    }
+    private void launchTicketsActivity(){
+        Intent intent = new Intent(getActivity(), TicketsActivity.class);
+        Bundle data = new Bundle();
+        data.putSerializable(this.INPUTS, inputMessage);
+        intent.putExtras(data);
+        startActivity(intent);
     }
     //打开输入法
     private void closeSoftKeyBord(Context context, View v){

@@ -52,17 +52,19 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
 
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mViewpager = (ViewPager) findViewById(R.id.content);
+        title = (TextView) findViewById(R.id.title);
         checkfragment = new CheckFragment();
         historyFragment = new HistoryFragment();
         mFragmentManager = getSupportFragmentManager();
+
         mViews.clear();
         mViews.add(checkfragment);
         mViews.add(historyFragment);
 
-        mViewpager = (ViewPager) findViewById(R.id.content);
-        title = (TextView) findViewById(R.id.title);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
+
         // 添加返回按钮
         if(getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -76,7 +78,13 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navigation.setSelectedItemId(R.id.navigation_dashboard);
         title.setText(getResources().getString(R.string.title_check));
+        setmViewpagerLogic();
 
+
+
+    }
+
+    private void setmViewpagerLogic(){
         mViewpager.setAdapter(new FragmentPagerAdapter(mFragmentManager) {
             @Override
             public Fragment getItem(int position) {
@@ -103,20 +111,17 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
                         break;
                 }
             }
-
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
             }
         });
-
     }
 
     @Override
-    public void changeFragment() {
+    public void onChangeFragment() {
         navigation.setSelectedItemId(R.id.navigation_dashboard);
     }
 }
