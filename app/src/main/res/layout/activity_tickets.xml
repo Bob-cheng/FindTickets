@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="space.bobcheng.myapplication.TicketsActivity">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            >
+            <TableRow>
+
+                <CheckBox
+                    android:id="@+id/trains_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="全选"
+                    android:checked="true"/>
+
+                <CheckBox
+                    android:id="@+id/trains_d"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="动车"
+                    android:checked="true"/>
+
+                <CheckBox
+                    android:id="@+id/trains_g"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="高铁"
+                    android:checked="true"/>
+
+            </TableRow>
+            <TableRow>
+
+                <CheckBox
+                    android:id="@+id/trains_k"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="快速"
+                    android:checked="true"/>
+
+                <CheckBox
+                    android:id="@+id/trains_t"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="特快"
+                    android:checked="true"/>
+
+                <CheckBox
+                    android:id="@+id/trains_z"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="直达 "
+                    android:checked="true"/>
+            </TableRow>
+        </TableLayout>
+    </android.support.v7.widget.CardView>
+    <ListView
+        android:id="@+id/ticket_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </ListView>
+
+
+
+</LinearLayout>

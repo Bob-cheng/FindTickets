@@ -4,12 +4,11 @@ package space.bobcheng.myapplication;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,21 +17,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -44,14 +38,12 @@ public class CheckFragment extends Fragment {
     private EditText start_place;
     private EditText end_place;
     private CoordinatorLayout rootLayout;
-    private Button mSubmitBtn;
     private HashMap<String, String> placeMap;
     private HashMap<Integer, String> numberMap = NumberMap.map;
     private Calendar today = Calendar.getInstance();
     private Calendar chose = Calendar.getInstance();
     private ArrayList<String> inputMessage = new ArrayList<>();
-
-
+    private String ticket_type = "ADULT";
 
     public CheckFragment() {
         // Required empty public constructor
@@ -104,7 +96,22 @@ public class CheckFragment extends Fragment {
         start_place = (EditText) getView().findViewById(R.id.check_start);
         end_place = (EditText) getView().findViewById(R.id.check_end);
         rootLayout = (CoordinatorLayout) getView().findViewById(R.id.root_layout);
-        mSubmitBtn = (Button) getView().findViewById(R.id.submit);
+        Button mSubmitBtn = (Button) getView().findViewById(R.id.submit);
+        RadioGroup rg = (RadioGroup) getView().findViewById(R.id.ticket_type);
+
+        View.OnFocusChangeListener loseFcloseKey = new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus){
+                    closeSoftKeyBord(getActivity(), v);
+                }else {
+                    openSoftKeyBord(getActivity(), v);
+                }
+            }
+        };
+
+        start_place.setOnFocusChangeListener(loseFcloseKey);
+        end_place.setOnFocusChangeListener(loseFcloseKey);
 
         setTimeText(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
         start_time.setOnClickListener(new View.OnClickListener() {
@@ -122,19 +129,21 @@ public class CheckFragment extends Fragment {
             }
         });
 
-        View.OnFocusChangeListener loseFcloseKey = new View.OnFocusChangeListener() {
+        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus){
-                    closeSoftKeyBord(getActivity(), v);
-                }else {
-                    openSoftKeyBord(getActivity(), v);
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                switch (checkedId){
+                    case R.id.adult:
+                        ticket_type = "ADULT";
+                        break;
+                    case R.id.student:
+                        ticket_type = "STUDENT";
+                        break;
+                    default:
+                        ticket_type = "ADULT";
                 }
             }
-        };
-
-        start_place.setOnFocusChangeListener(loseFcloseKey);
-        end_place.setOnFocusChangeListener(loseFcloseKey);
+        });
 
         mSubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,7 +190,9 @@ public class CheckFragment extends Fragment {
                     inputMessage.add(placeMap.get(start));
                     inputMessage.add(placeMap.get(end));
                     inputMessage.add(time);
-                    Log.i("finalmessage", inputMessage.get(0)+" "+inputMessage.get(1)+" "+inputMessage.get(2));
+                    inputMessage.add(ticket_type);
+                    Log.i("finalmessage", inputMessage.get(0)+" "+inputMessage.get(1)+
+                            " "+inputMessage.get(2)+" "+inputMessage.get(3));
                 }
             }
         });

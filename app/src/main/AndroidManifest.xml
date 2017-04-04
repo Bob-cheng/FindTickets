@@ -11,16 +11,16 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".SignInActivity"
-            android:launchMode="singleTask">
-
-        </activity>
+            android:launchMode="singleTask"></activity>
         <activity
             android:name=".SignUpActivity"
             android:launchMode="singleTask" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppThemeNoActionBar"
-            >
+            android:theme="@style/AppThemeNoActionBar">
+
+        </activity>
+        <activity android:name=".TicketsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
