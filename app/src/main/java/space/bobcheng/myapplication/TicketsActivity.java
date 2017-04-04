@@ -6,9 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-
 import java.util.ArrayList;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -20,21 +18,20 @@ import space.bobcheng.myapplication.jsonPackage.MyQuery;
 
 import static space.bobcheng.myapplication.UnsafeHttp.getUnsafeOkHttpClient;
 
+
+//retrofit的查询接口
 interface ItrainQueryAPIService{
-    @GET("queryx")
+    @GET("query")
     Call<MyQuery> getTicketInfo(@Query("leftTicketDTO.train_date") String date,
                                 @Query("leftTicketDTO.from_station") String from,
                                 @Query("leftTicketDTO.to_station") String to,
                                 @Query("purpose_codes") String type);
 }
 
-
 public class TicketsActivity extends AppCompatActivity {
     private CheckBox [] boxs = new CheckBox[6];
-    private String requestUrl;
     private int statusCode = -1;
     private MyQuery query;
-    //public static final String BASE_URL = "http://kyfw.12306.cn/otn/leftTicket";
     public static final String BASE_URL = "https://kyfw.12306.cn/otn/leftTicket/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +53,16 @@ public class TicketsActivity extends AppCompatActivity {
         inputMessage.add("2017-04-04");
         inputMessage.add("ADULT");
 
-        requestUrl = "https://kyfw.12306.cn/otn/leftTicket/queryx?leftTicketDTO.train_date="+inputMessage.get(2)+
+        String requestUrl = "https://kyfw.12306.cn/otn/leftTicket/queryx?leftTicketDTO.train_date="+inputMessage.get(2)+
                 "&leftTicketDTO.from_station="+inputMessage.get(0) +
                 "&leftTicketDTO.to_station="+inputMessage.get(1)+
                 "&purpose_codes="+inputMessage.get(3);
         Log.i("message_get", requestUrl);
 
+        //http://www.jianshu.com/p/5bc866b9cbb9
+        //http://square.github.io/retrofit/
+        //http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/1016/3588.html
+        //为了解决ssl证书的问题，这里创建的client可以信任所有证书。
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(getUnsafeOkHttpClient())
@@ -77,7 +78,8 @@ public class TicketsActivity extends AppCompatActivity {
                 statusCode = response.code();
                 Log.i("statusCode", statusCode+"");
                 query = response.body();
-                Log.i("queryStatus", query.getStatus().toString());
+                String arrivetime = query.getData().get(0).getQueryLeftNewDTO().getArriveTime();
+                Log.i("queryStatus", arrivetime);
             }
 
             @Override
@@ -89,7 +91,7 @@ public class TicketsActivity extends AppCompatActivity {
 
     }
 
-
+    //初始化单选框的逻辑
     private void initCheckBoxs (){
         boxs[0] = (CheckBox) findViewById(R.id.trains_all);
         boxs[1] = (CheckBox) findViewById(R.id.trains_d);
@@ -126,7 +128,7 @@ public class TicketsActivity extends AppCompatActivity {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if(!isChecked){
                         boxs[0].setChecked(false);
-                    }else if(isChecked) {
+                    }else{
                         boolean flag = true;
                         for(int j = 1; j < 6; j++){
                             if(!boxs[j].isChecked()){
