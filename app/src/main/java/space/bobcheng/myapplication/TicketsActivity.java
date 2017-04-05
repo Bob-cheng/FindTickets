@@ -1,26 +1,28 @@
 package space.bobcheng.myapplication;
 
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ProgressBar;
+import android.widget.FrameLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
+import space.bobcheng.myapplication.apiService.ItrainQueryAPIService;
+import space.bobcheng.myapplication.apiService.ItrainQueryAPIService_x;
 import space.bobcheng.myapplication.jsonClass.MyQuery;
 
 import static space.bobcheng.myapplication.retrofitUtli.UnsafeHttp.getUnsafeOkHttpClient;
@@ -29,18 +31,35 @@ import static space.bobcheng.myapplication.retrofitUtli.UnsafeHttp.getUnsafeOkHt
 
 public class TicketsActivity extends AppCompatActivity {
     private CheckBox [] boxs = new CheckBox[6];
-    private int statusCode = -1;
-    private MyQuery query;
+    private MyQuery query = null;
     private static final String BASE_URL = "https://kyfw.12306.cn/otn/leftTicket/";
-    private ProgressBar progressBar;
+    private ConstraintLayout mprocess_layout;
     private Toolbar toolbar;
+    private Retrofit retrofit;
+    private ArrayList<String> inputMessage;
+    private FrameLayout mframeLayout;
+    private View.OnClickListener reconnect = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mprocess_layout.setVisibility(View.VISIBLE);
+            initMyQuery();
+        }
+    };
+    private HashMap<String, String> trainHashMap = new HashMap<String, String>(){
+        {
+            put("动车", "d");put("高铁", "g");put("快速", "k");
+            put("特快", "t");put("直达", "z");
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tickets);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.VISIBLE);
+        mprocess_layout = (ConstraintLayout) findViewById(R.id.process_layout);
+        mframeLayout  = (FrameLayout) findViewById(R.id.frame_layout); 
+
+
         toolbar = (Toolbar) findViewById(R.id.tickets_toolbar);
         //http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2014/1118/2006.html
         //http://www.jianshu.com/p/ae0013a4f71a
@@ -66,54 +85,32 @@ public class TicketsActivity extends AppCompatActivity {
         //inputMessage =(ArrayList<String>) data.getSerializable(CheckFragment.INPUTS);
         ArrayList<String> inputMessage = data.getStringArrayList(CheckFragment.INPUTS);*/
 
-        ArrayList<String> inputMessage = new ArrayList<>();
+        inputMessage = new ArrayList<>();
         inputMessage.clear();
         inputMessage.add("CDW");
         inputMessage.add("RXW");
-        inputMessage.add("2017-04-05");
+        inputMessage.add("2017-04-20");
         inputMessage.add("ADULT");
 
-        String requestUrl = "https://kyfw.12306.cn/otn/leftTicket/queryx?leftTicketDTO.train_date="+inputMessage.get(2)+
+        String requestUrl = "https://kyfw.12306.cn/otn/leftTicket/query?leftTicketDTO.train_date="+inputMessage.get(2)+
                 "&leftTicketDTO.from_station="+inputMessage.get(0) +
                 "&leftTicketDTO.to_station="+inputMessage.get(1)+
                 "&purpose_codes="+inputMessage.get(3);
         Log.i("message_get", requestUrl);
-
+        Log.i("options", getOptions().toString());
 
         //http://www.jianshu.com/p/5bc866b9cbb9
         //http://square.github.io/retrofit/
         //http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/1016/3588.html
         //为了解决ssl证书的问题，这里创建的client可以信任所有证书。
-        Retrofit retrofit = new Retrofit.Builder()
+        retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(getUnsafeOkHttpClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        ItrainQueryAPIService trainApiService = retrofit.create(ItrainQueryAPIService.class);
-        Call<MyQuery> call = trainApiService.getTicketInfo(inputMessage.get(2), inputMessage.get(0), inputMessage.get(1),inputMessage.get(3));
-        call.enqueue(new Callback<MyQuery>() {
+        initMyQuery();
 
-            @Override
-            public void onResponse(Call<MyQuery> call, Response<MyQuery> response) {
-                statusCode = response.code();
-                Log.i("statusCode", statusCode+"");
-                if(statusCode == 200){
-                    query = response.body();
-                    String arrivetime = query.getData().get(0).getQueryLeftNewDTO().getArriveTime();
-                    Log.i("queryStatus", arrivetime);
-                }else {
-                    Log.e("StatusError", "server response error");
-                }
-                progressBar.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onFailure(Call<MyQuery> call, Throwable t) {
-                Log.e("requestError", t.toString());
-            }
-
-        });
 
     }
     //https://shanksleo.gitbooks.io/cookbook/content/view/toolbar.html
@@ -121,6 +118,69 @@ public class TicketsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tickets_activity_menu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private ArrayList<String> getOptions(){
+        ArrayList<String> options = new ArrayList<>();
+        for(int i = 1; i < 6; i++){
+            if(boxs[i].isChecked()){
+                options.add(trainHashMap.get(boxs[i].getText().toString()));
+            }
+        }
+        return options;
+    }
+    //获取12306数据，先调用query如果query不生效就调用queryx
+    private void initMyQuery(){
+        ItrainQueryAPIService trainApiService = retrofit.create(ItrainQueryAPIService.class);
+        Call<MyQuery> call = trainApiService.getTicketInfo(inputMessage.get(2), inputMessage.get(0), inputMessage.get(1),inputMessage.get(3));
+        call.enqueue(new Callback<MyQuery>() {
+            @Override
+            public void onResponse(Call<MyQuery> call, Response<MyQuery> response) {
+                Log.i("statusCode", response.code()+"");
+                if(response.code() == 200 && response.body() != null && response.body().getStatus() ){
+                    query = response.body();
+                    String arrivetime = query.getData().get(0).getQueryLeftNewDTO().getArriveTime();
+                    Log.i("queryStatus", arrivetime);
+                    mprocess_layout.setVisibility(View.INVISIBLE);
+                }else {
+                    Log.e("Status", "start to queryx");
+                    initMyQuery_x();
+                }
+            }
+            @Override
+            public void onFailure(Call<MyQuery> call, Throwable t) {
+                Log.e("requestError", t.toString());
+                Snackbar.make(mframeLayout, "连接失败，请检查网络设置", Snackbar.LENGTH_LONG)
+                        .setAction("重试", reconnect).show();
+                mprocess_layout.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+    //有时候获取的api只有queryx才生效。。。
+    private void initMyQuery_x(){
+        ItrainQueryAPIService_x trainApiService = retrofit.create(ItrainQueryAPIService_x.class);
+        Call<MyQuery> call = trainApiService.getTicketInfo(inputMessage.get(2), inputMessage.get(0), inputMessage.get(1),inputMessage.get(3));
+        call.enqueue(new Callback<MyQuery>() {
+            @Override
+            public void onResponse(Call<MyQuery> call, Response<MyQuery> response) {
+                Log.i("x_statusCode", response.code()+"");
+                if(response.code() == 200 && response.body() != null && response.body().getStatus() ){
+                    query = response.body();
+                    String arrivetime = query.getData().get(0).getQueryLeftNewDTO().getArriveTime();
+                    Log.i("query_x_Status", arrivetime);
+                }else {
+                    Log.e("queryx", "server response error");
+                    Snackbar.make(mframeLayout, "服务器数据异常，请稍后再试", Snackbar.LENGTH_LONG)
+                            .setAction("重试", reconnect).show();
+                }
+                mprocess_layout.setVisibility(View.INVISIBLE);
+            }
+            @Override
+            public void onFailure(Call<MyQuery> call, Throwable t) {
+                Log.e("x_requestError", t.toString());
+                mprocess_layout.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
     //初始化单选框的逻辑
@@ -178,11 +238,3 @@ public class TicketsActivity extends AppCompatActivity {
 }
 
 
-//retrofit的查询接口
-interface ItrainQueryAPIService{
-    @GET("query")
-    Call<MyQuery> getTicketInfo(@Query("leftTicketDTO.train_date") String date,
-                                @Query("leftTicketDTO.from_station") String from,
-                                @Query("leftTicketDTO.to_station") String to,
-                                @Query("purpose_codes") String type);
-}
