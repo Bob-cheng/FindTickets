@@ -104,7 +104,8 @@
             <ListView
                 android:id="@+id/ticket_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:divider="@android:color/transparent">
 
             </ListView>
         </LinearLayout>

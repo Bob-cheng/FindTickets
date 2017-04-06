@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<android.support.v7.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp">
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <TableRow
+                    android:layout_margin="4dp"
+                    >
+                    <TextView
+                        android:id="@+id/start_time"
+                        android:layout_width="60dp"
+                        android:layout_height="20dp"
+                        android:gravity="center"
+                        android:text="06:45"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_weight="1"
+                        />
+                    <TextView
+                        android:id="@+id/start_place"
+                        android:layout_width="60dp"
+                        android:layout_height="20dp"
+                        android:gravity="center"
+                        android:text="成都"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:layout_weight="1"
+                        />
+                    <TextView
+                        android:id="@+id/train_num"
+                        android:layout_width="60dp"
+                        android:layout_height="20dp"
+                        android:gravity="center"
+                        android:text="D2244"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_weight="1"/>
+
+
+                </TableRow>
+                <TableRow
+                    android:layout_margin="4dp">
+                    <TextView
+                        android:id="@+id/end_time"
+                        android:layout_width="60dp"
+                        android:layout_height="20dp"
+                        android:gravity="center"
+                        android:text="06:45"
+                        android:layout_weight="1"
+                        />
+                    <TextView
+                        android:id="@+id/end_place"
+                        android:layout_width="60dp"
+                        android:layout_height="20dp"
+                        android:gravity="center"
+                        android:text="武汉"
+                        android:textColor="@android:color/black"
+                        android:layout_weight="1"
+                        />
+                    <TextView
+                        android:id="@+id/lishi"
+                        android:layout_width="60dp"
+                        android:layout_height="20dp"
+                        android:gravity="center"
+                        android:text="9时44分"
+                        android:layout_weight="1"
+                        />
+
+                </TableRow>
+            </TableLayout>
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="有票"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:layout_weight="3"
+                />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="250dp"
+            android:layout_height="1dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@android:color/darker_gray" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="5dp">
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/seats_first"
+                    android:layout_width="50dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="一等"
+                    />
+
+                <TextView
+                    android:id="@+id/seats_second"
+                    android:layout_width="50dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="二等" />
+
+                <TextView
+                    android:id="@+id/seats_rw"
+                    android:layout_width="50dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="软卧" />
+
+                <TextView
+                    android:id="@+id/seats_yw"
+                    android:layout_width="50dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="硬卧" />
+
+                <TextView
+                    android:id="@+id/seats_yz"
+                    android:layout_width="50dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="硬座" />
+
+                <TextView
+                    android:id="@+id/seats_wz"
+                    android:layout_width="50dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="无座" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/seats_first_num"
+                    android:layout_width="50dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="--"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/seats_second_num"
+                    android:layout_width="50dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="--"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/seats_rw_num"
+                    android:layout_width="50dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="--"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/seats_yw_num"
+                    android:layout_width="50dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="32"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/seats_yz_num"
+                    android:layout_width="50dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="有"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/seats_wz_num"
+                    android:layout_width="50dp"
+                    android:layout_height="25dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="--"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>
+</FrameLayout>

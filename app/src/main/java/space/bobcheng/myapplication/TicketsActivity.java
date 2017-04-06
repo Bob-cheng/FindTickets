@@ -12,9 +12,13 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,7 +27,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import space.bobcheng.myapplication.apiService.ItrainQueryAPIService;
 import space.bobcheng.myapplication.apiService.ItrainQueryAPIService_x;
+import space.bobcheng.myapplication.jsonClass.Datum;
 import space.bobcheng.myapplication.jsonClass.MyQuery;
+import space.bobcheng.myapplication.jsonClass.QueryLeftNewDTO;
 
 import static space.bobcheng.myapplication.retrofitUtli.UnsafeHttp.getUnsafeOkHttpClient;
 
@@ -38,11 +44,19 @@ public class TicketsActivity extends AppCompatActivity {
     private Retrofit retrofit;
     private ArrayList<String> inputMessage;
     private FrameLayout mframeLayout;
+    private List<Datum> trainsData;
+    private ListView mTicketsListView;
     private View.OnClickListener reconnect = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             mprocess_layout.setVisibility(View.VISIBLE);
             initMyQuery();
+        }
+    };
+    private View.OnClickListener setOptions = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            makeLists();
         }
     };
     private HashMap<String, String> trainHashMap = new HashMap<String, String>(){
@@ -57,7 +71,8 @@ public class TicketsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tickets);
         mprocess_layout = (ConstraintLayout) findViewById(R.id.process_layout);
-        mframeLayout  = (FrameLayout) findViewById(R.id.frame_layout); 
+        mframeLayout  = (FrameLayout) findViewById(R.id.frame_layout);
+        mTicketsListView = (ListView) findViewById(R.id.ticket_list);
 
 
         toolbar = (Toolbar) findViewById(R.id.tickets_toolbar);
@@ -81,16 +96,16 @@ public class TicketsActivity extends AppCompatActivity {
         if(getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        /*Bundle data = getIntent().getExtras();
+        Bundle data = getIntent().getExtras();
         //inputMessage =(ArrayList<String>) data.getSerializable(CheckFragment.INPUTS);
-        ArrayList<String> inputMessage = data.getStringArrayList(CheckFragment.INPUTS);*/
+        inputMessage = data.getStringArrayList(CheckFragment.INPUTS);
 
-        inputMessage = new ArrayList<>();
+        /*inputMessage = new ArrayList<>();
         inputMessage.clear();
         inputMessage.add("CDW");
         inputMessage.add("RXW");
-        inputMessage.add("2017-04-20");
-        inputMessage.add("ADULT");
+        inputMessage.add("2017-04-16");
+        inputMessage.add("ADULT");*/
 
         String requestUrl = "https://kyfw.12306.cn/otn/leftTicket/query?leftTicketDTO.train_date="+inputMessage.get(2)+
                 "&leftTicketDTO.from_station="+inputMessage.get(0) +
@@ -130,6 +145,74 @@ public class TicketsActivity extends AppCompatActivity {
         return options;
     }
     //获取12306数据，先调用query如果query不生效就调用queryx
+    private void makeLists(){
+        Log.i("List", "start to make list");
+        List<Map<String, Object>> listItems =
+                new ArrayList<>();
+        ArrayList<String> options = getOptions();
+        for(int i = 0; i < trainsData.size(); i++){
+            QueryLeftNewDTO queryLeftNewDTO = trainsData.get(i).getQueryLeftNewDTO();
+            String train_type = ""+queryLeftNewDTO.getStationTrainCode().charAt(0);
+            if(options.contains(train_type.toLowerCase())){
+                String Youwu = "无票";
+                Map<String, Object> item = new HashMap<>();
+                item.put("start_time", queryLeftNewDTO.getStartTime());
+                item.put("end_time", queryLeftNewDTO.getArriveTime());
+                item.put("start_place", queryLeftNewDTO.getFromStationName());
+                item.put("end_place", queryLeftNewDTO.getToStationName());
+                item.put("train_num", queryLeftNewDTO.getStationTrainCode());
+                String lishi = queryLeftNewDTO.getLishi().replace(':', '时')+"分";
+                if(lishi.startsWith("00")){
+                    lishi = lishi.substring(4);
+                }else if(lishi.startsWith("0")){
+                    lishi = lishi.substring(1);
+                }
+                item.put("lishi", lishi);
+
+                if(checkYouWu(queryLeftNewDTO.getZyNum()))
+                    Youwu = "有票";
+                item.put("seats_first_num", queryLeftNewDTO.getZyNum());
+                if(checkYouWu(queryLeftNewDTO.getZeNum()))
+                    Youwu = "有票";
+                item.put("seats_second_num", queryLeftNewDTO.getZeNum());
+                if(checkYouWu(queryLeftNewDTO.getRwNum()))
+                    Youwu = "有票";
+                item.put("seats_rw_num", queryLeftNewDTO.getRwNum());
+                if(checkYouWu(queryLeftNewDTO.getYwNum()))
+                    Youwu = "有票";
+                item.put("seats_yw_num", queryLeftNewDTO.getYwNum());
+                if(checkYouWu(queryLeftNewDTO.getYzNum()))
+                    Youwu = "有票";
+                item.put("seats_yz_num", queryLeftNewDTO.getYzNum());
+                if(checkYouWu(queryLeftNewDTO.getWzNum()))
+                    Youwu = "有票";
+                item.put("seats_wz_num", queryLeftNewDTO.getWzNum());
+                item.put("status", Youwu);
+                listItems.add(item);
+            }
+
+        }
+        SimpleAdapter simpleAdapter = new SimpleAdapter(this, listItems,
+                R.layout.ticket_item,
+                new String[]{"start_time", "end_time", "start_place", "end_place", "train_num",
+                                "lishi", "seats_first_num", "seats_second_num", "seats_rw_num",
+                                "seats_yw_num",  "seats_yz_num", "seats_wz_num",
+                                "status"},
+                new int[]{R.id.start_time, R.id.end_time, R.id.start_place, R.id.end_place, R.id.train_num,
+                        R.id.lishi, R.id.seats_first_num, R.id.seats_second_num, R.id.seats_rw_num,
+                        R.id.seats_yw_num, R.id.seats_yz_num, R.id.seats_wz_num,
+                        R.id.status}
+                );
+        mTicketsListView.setAdapter(simpleAdapter);
+        Log.i("List", "finish make list view");
+    }
+
+    private boolean checkYouWu(String input){
+        if(input == "--" || input == "无")
+            return false;
+        else
+            return true;
+    }
     private void initMyQuery(){
         ItrainQueryAPIService trainApiService = retrofit.create(ItrainQueryAPIService.class);
         Call<MyQuery> call = trainApiService.getTicketInfo(inputMessage.get(2), inputMessage.get(0), inputMessage.get(1),inputMessage.get(3));
@@ -141,6 +224,8 @@ public class TicketsActivity extends AppCompatActivity {
                     query = response.body();
                     String arrivetime = query.getData().get(0).getQueryLeftNewDTO().getArriveTime();
                     Log.i("queryStatus", arrivetime);
+                    trainsData = query.getData();
+                    makeLists();
                     mprocess_layout.setVisibility(View.INVISIBLE);
                 }else {
                     Log.e("Status", "start to queryx");
@@ -168,6 +253,8 @@ public class TicketsActivity extends AppCompatActivity {
                     query = response.body();
                     String arrivetime = query.getData().get(0).getQueryLeftNewDTO().getArriveTime();
                     Log.i("query_x_Status", arrivetime);
+                    trainsData = query.getData();
+                    makeLists();
                 }else {
                     Log.e("queryx", "server response error");
                     Snackbar.make(mframeLayout, "服务器数据异常，请稍后再试", Snackbar.LENGTH_LONG)
@@ -191,6 +278,7 @@ public class TicketsActivity extends AppCompatActivity {
         boxs[3] = (CheckBox) findViewById(R.id.trains_k);
         boxs[4] = (CheckBox) findViewById(R.id.trains_t);
         boxs[5] = (CheckBox) findViewById(R.id.trains_z);
+
         boxs[0].setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -211,6 +299,7 @@ public class TicketsActivity extends AppCompatActivity {
                         boxs[i].setChecked(false);
                     }
                 }
+                makeLists();
             }
         });
 
@@ -233,6 +322,7 @@ public class TicketsActivity extends AppCompatActivity {
                     }
                 }
             });
+            boxs[i].setOnClickListener(setOptions);
         }
     }
 }
