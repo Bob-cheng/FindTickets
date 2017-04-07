@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,7 +45,7 @@ public class TicketsActivity extends AppCompatActivity {
     private Retrofit retrofit;
     private ArrayList<String> inputMessage;
     private FrameLayout mframeLayout;
-    private List<Datum> trainsData;
+    private List<Datum> trainsData = null;
     private ListView mTicketsListView;
     private View.OnClickListener reconnect = new View.OnClickListener() {
         @Override
@@ -146,6 +147,12 @@ public class TicketsActivity extends AppCompatActivity {
     }
     //获取12306数据，先调用query如果query不生效就调用queryx
     private void makeLists(){
+        if(trainsData == null){
+            Snackbar.make(mframeLayout, "数据异常，请重试", Snackbar.LENGTH_LONG)
+                    .setAction("重试", reconnect).show();
+            return;
+        }
+
         Log.i("List", "start to make list");
         List<Map<String, Object>> listItems =
                 new ArrayList<>();
@@ -220,14 +227,14 @@ public class TicketsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<MyQuery> call, Response<MyQuery> response) {
                 Log.i("statusCode", response.code()+"");
-                if(response.code() == 200 && response.body() != null && response.body().getStatus() ){
+                try{
                     query = response.body();
                     String arrivetime = query.getData().get(0).getQueryLeftNewDTO().getArriveTime();
-                    Log.i("queryStatus", arrivetime);
+                    Log.i("query_Status", arrivetime);
                     trainsData = query.getData();
                     makeLists();
                     mprocess_layout.setVisibility(View.INVISIBLE);
-                }else {
+                }catch (Exception e){
                     Log.e("Status", "start to queryx");
                     initMyQuery_x();
                 }
@@ -249,18 +256,19 @@ public class TicketsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<MyQuery> call, Response<MyQuery> response) {
                 Log.i("x_statusCode", response.code()+"");
-                if(response.code() == 200 && response.body() != null && response.body().getStatus() ){
+                try{
                     query = response.body();
                     String arrivetime = query.getData().get(0).getQueryLeftNewDTO().getArriveTime();
                     Log.i("query_x_Status", arrivetime);
                     trainsData = query.getData();
                     makeLists();
-                }else {
-                    Log.e("queryx", "server response error");
+                }catch (Exception e){
+                    Log.e("queryx", "server response error."+e.toString());
                     Snackbar.make(mframeLayout, "服务器数据异常，请稍后再试", Snackbar.LENGTH_LONG)
                             .setAction("重试", reconnect).show();
+                }finally {
+                    mprocess_layout.setVisibility(View.INVISIBLE);
                 }
-                mprocess_layout.setVisibility(View.INVISIBLE);
             }
             @Override
             public void onFailure(Call<MyQuery> call, Throwable t) {

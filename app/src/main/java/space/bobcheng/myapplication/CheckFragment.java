@@ -159,6 +159,12 @@ public class CheckFragment extends Fragment {
                 String start = start_place.getText().toString();
                 String end = end_place.getText().toString();
                 String time = start_time.getText().toString();
+                int daysDistance = -1;
+                if(chose.compareTo(today) != -1){
+                     daysDistance = (int)((chose.getTimeInMillis()-today.getTimeInMillis())/(24*3600*1000));
+                    Log.i("days", ""+daysDistance);
+                }
+
                 if(!placeMap.containsKey(start)){
                     Log.i("click", "出发地");
                     Snackbar.make(rootLayout, "出发地不支持", Snackbar.LENGTH_LONG)
@@ -181,9 +187,9 @@ public class CheckFragment extends Fragment {
                                 }
                             }).show();
 
-                }else if(chose.compareTo(today) == -1){
+                }else if(chose.compareTo(today) == -1 || daysDistance >= 30){
                     Log.i("click", "时间");
-                    Snackbar.make(rootLayout, "请选择正确时间", Snackbar.LENGTH_LONG)
+                    Snackbar.make(rootLayout, "仅支持查询后30天内的票务信息", Snackbar.LENGTH_LONG)
                             .setAction("修改", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
