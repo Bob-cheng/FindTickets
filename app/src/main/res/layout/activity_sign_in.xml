@@ -17,7 +17,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:ems="10"
-        android:hint="@string/username_hint"
+        android:hint="@string/email_hint"
         android:inputType="textPersonName"
         android:padding="5dp"
         android:paddingStart="10dp"
