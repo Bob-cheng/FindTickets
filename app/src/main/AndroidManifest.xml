@@ -17,17 +17,20 @@
         </activity>
         <activity
             android:name=".SignUpActivity"
-            android:launchMode="singleTask" />
-        <activity
-            android:name=".MainActivity"
-            android:theme="@style/AppThemeNoActionBar"
-            android:launchMode="singleTask"
-            >
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppThemeNoActionBar"
+            android:launchMode="singleTask"
+            >
+
         </activity>
         <activity android:name=".TicketsActivity"
             android:theme="@style/AppThemeNoActionBar"

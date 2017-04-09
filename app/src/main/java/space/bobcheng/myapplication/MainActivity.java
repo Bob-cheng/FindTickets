@@ -3,6 +3,7 @@ package space.bobcheng.myapplication;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
     private BottomNavigationView navigation;
     private ViewPager mViewpager;
     private ArrayList<Fragment> mViews = new ArrayList<>();
+    private String myusername;
+    private String myemail;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
         mViews.add(checkfragment);
         mViews.add(historyFragment);
 
+
+
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
@@ -79,9 +84,20 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
         navigation.setSelectedItemId(R.id.navigation_dashboard);
         title.setText(getResources().getString(R.string.title_check));
         setmViewpagerLogic();
+        sayHello();
 
 
+    }
 
+    private void sayHello(){
+        Bundle data = getIntent().getExtras();
+        myusername = data.getString("username");
+        myemail = data.getString("email");
+        if(data.getBoolean("signup")){
+            Snackbar.make(mViewpager, "注册成功.你好 "+myusername, Snackbar.LENGTH_LONG).show();
+        }else {
+            Snackbar.make(mViewpager, "登录成功.你好 "+myusername, Snackbar.LENGTH_LONG).show();
+        }
     }
 
     private void setmViewpagerLogic(){

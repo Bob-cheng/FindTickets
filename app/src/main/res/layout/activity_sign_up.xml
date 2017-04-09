@@ -141,5 +141,5 @@
         app:layout_constraintRight_toRightOf="@+id/button"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="@+id/button"
-        android:onClick="toSignIn"/>
+        android:onClick="backtoSignIn"/>
 </android.support.constraint.ConstraintLayout>

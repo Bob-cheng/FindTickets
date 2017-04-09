@@ -219,12 +219,12 @@ public class CheckFragment extends Fragment {
         intent.putExtras(data);
         startActivity(intent);
     }
-    //打开输入法
+    //收齐输入法
     private void closeSoftKeyBord(Context context, View v){
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
-    //收起输入法
+    //打开输入法
     private void openSoftKeyBord(Context context, View v){
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(v, 0);

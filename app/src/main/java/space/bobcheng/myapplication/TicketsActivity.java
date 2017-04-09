@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,7 +31,7 @@ import space.bobcheng.myapplication.jsonClass.Datum;
 import space.bobcheng.myapplication.jsonClass.MyQuery;
 import space.bobcheng.myapplication.jsonClass.QueryLeftNewDTO;
 
-import static space.bobcheng.myapplication.retrofitUtli.UnsafeHttp.getUnsafeOkHttpClient;
+import static space.bobcheng.myapplication.MyUtlis.UnsafeHttp.getUnsafeOkHttpClient;
 
 
 
@@ -215,7 +214,7 @@ public class TicketsActivity extends AppCompatActivity {
     }
 
     private boolean checkYouWu(String input){
-        if(input == "--" || input == "无")
+        if(input.equals("--") || input.equals("无"))
             return false;
         else
             return true;
