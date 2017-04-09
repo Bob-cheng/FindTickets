@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Find Tickets</string>
-    <string name="sign_in">Sign In</string>
-    <string name="passwd_hint">Password</string>
-    <string name="username_hint">Email address</string>
-    <string name="login_sign_up"><u>No accounts? Click to sign up</u></string>
-</resources>
