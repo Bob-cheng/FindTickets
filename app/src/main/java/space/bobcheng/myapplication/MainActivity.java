@@ -10,11 +10,24 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity implements HistoryFragment.MyCallback{
     private Fragment checkfragment;
@@ -22,11 +35,13 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
     private FragmentManager mFragmentManager;
     private Toolbar toolbar;
     private TextView title;
+    public static HashMap<String, String> placeMap;
+    public static HashMap<String, String> reversePlaceMap;
     private BottomNavigationView navigation;
     private ViewPager mViewpager;
     private ArrayList<Fragment> mViews = new ArrayList<>();
-    private String myusername;
-    private String myemail;
+    public static String myusername;
+    public static String myemail = "123123@gmail.com"; //debug 先写死
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -53,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getPlaceMap();
+        getReversePlacemap();
+        // sayHello(); //debug 暂时不用调用
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mViewpager = (ViewPager) findViewById(R.id.content);
@@ -84,9 +102,29 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
         navigation.setSelectedItemId(R.id.navigation_dashboard);
         title.setText(getResources().getString(R.string.title_check));
         setmViewpagerLogic();
-        sayHello();
 
 
+    }
+
+    private void getPlaceMap(){
+        try{
+            InputStream jsonis = getAssets().open("stations.json");
+            InputStreamReader jsonisr = new InputStreamReader(jsonis,"UTF-8");
+            //json解析成map,Gson还是强大。
+            Gson gson = new Gson();
+            placeMap = gson.fromJson(jsonisr, new TypeToken<HashMap<String, String>>(){}.getType());
+        }catch (IOException e){
+            Log.e("init_placeMap", e.toString());
+        }
+    }
+    private void getReversePlacemap(){
+        reversePlaceMap = new HashMap<>();
+        Set<Map.Entry<String, String>> set = placeMap.entrySet();
+        Iterator<Map.Entry<String, String>> iterator = set.iterator();
+        while (iterator.hasNext()){
+            Map.Entry<String, String> entry = iterator.next();
+            reversePlaceMap.put(entry.getValue(), entry.getKey());
+        }
     }
 
     private void sayHello(){
@@ -94,9 +132,9 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
         myusername = data.getString("username");
         myemail = data.getString("email");
         if(data.getBoolean("signup")){
-            Snackbar.make(mViewpager, "注册成功.你好 "+myusername, Snackbar.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "注册成功,你好"+myusername, Toast.LENGTH_LONG).show();
         }else {
-            Snackbar.make(mViewpager, "登录成功.你好 "+myusername, Snackbar.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "登录成功,你好"+myusername, Toast.LENGTH_LONG).show();
         }
     }
 

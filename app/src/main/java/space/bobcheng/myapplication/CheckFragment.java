@@ -39,7 +39,7 @@ public class CheckFragment extends Fragment {
     private EditText start_place;
     private EditText end_place;
     private CoordinatorLayout rootLayout;
-    private HashMap<String, String> placeMap;
+    private HashMap<String, String> placeMap = MainActivity.placeMap;
     private HashMap<Integer, String> numberMap = NumberMap.map;
     private Calendar today = Calendar.getInstance();
     private Calendar chose = Calendar.getInstance();
@@ -50,26 +50,6 @@ public class CheckFragment extends Fragment {
 
     public CheckFragment() {
         // Required empty public constructor
-    }
-
-    private void getPlaceMap() throws IOException {
-        InputStream jsonis = getActivity().getAssets().open("stations.json");
-        InputStreamReader jsonisr = new InputStreamReader(jsonis,"UTF-8");
-        //json解析成map,Gson还是强大。
-        Gson gson = new Gson();
-        placeMap = gson.fromJson(jsonisr, new TypeToken<HashMap<String, String>>(){}.getType());
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        try {
-            getPlaceMap();
-            Log.i("jsontest", placeMap.get("成都"));
-        }catch (IOException e){
-            Log.e("error","readJson False");
-        }
-        //getNumberMap();
     }
 
     @Override

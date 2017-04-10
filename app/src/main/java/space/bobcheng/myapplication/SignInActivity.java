@@ -32,7 +32,7 @@ public class SignInActivity extends AppCompatActivity {
     private ConstraintLayout activitymain;
     private Retrofit retrofit;
     private Button mButton;
-    private static final String BASE_URL = "http://23.83.231.104:8080/";
+    private static final String BASE_URL = SignUpActivity.BASE_URL;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -6,11 +6,10 @@
     tools:context="space.bobcheng.myapplication.HistoryFragment">
 
 
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="test2"
-        android:id="@+id/textView" />
+        android:layout_height="match_parent" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/addhistory"
