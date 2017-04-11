@@ -195,7 +195,7 @@ public class CheckFragment extends Fragment {
     private void launchTicketsActivity(){
         Intent intent = new Intent(getActivity(), TicketsActivity.class);
         Bundle data = new Bundle();
-        data.putSerializable(this.INPUTS, inputMessage);
+        data.putSerializable(CheckFragment.INPUTS, inputMessage);
         intent.putExtras(data);
         startActivity(intent);
     }

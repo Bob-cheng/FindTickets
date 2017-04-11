@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
     private BottomNavigationView navigation;
     private ViewPager mViewpager;
     private ArrayList<Fragment> mViews = new ArrayList<>();
-    public static String myusername;
+    public static String myusername = "czy@gmail.com";//debug 先写死
     public static String myemail = "123123@gmail.com"; //debug 先写死
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener

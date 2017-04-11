@@ -98,19 +98,20 @@ public class TicketsActivity extends AppCompatActivity {
         });
 
         initCheckBoxs();
+        //设置返回按钮
         if(getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        /*Bundle data = getIntent().getExtras();
+        Bundle data = getIntent().getExtras();
         //inputMessage =(ArrayList<String>) data.getSerializable(CheckFragment.INPUTS);
-        inputMessage = data.getStringArrayList(CheckFragment.INPUTS);*/
+        inputMessage = data.getStringArrayList(CheckFragment.INPUTS);
 
-        inputMessage = new ArrayList<>();
+        /*inputMessage = new ArrayList<>();
         inputMessage.clear();
         inputMessage.add("CDW");
         inputMessage.add("RXW");
         inputMessage.add("2017-04-16");
-        inputMessage.add("ADULT");
+        inputMessage.add("ADULT");*/
 
         String requestUrl = "https://kyfw.12306.cn/otn/leftTicket/query?leftTicketDTO.train_date="+inputMessage.get(2)+
                 "&leftTicketDTO.from_station="+inputMessage.get(0) +
@@ -263,8 +264,6 @@ public class TicketsActivity extends AppCompatActivity {
                 Log.i("statusCode", response.code()+"");
                 try{
                     query = response.body();
-                    String arrivetime = query.getData().get(0).getQueryLeftNewDTO().getArriveTime();
-                    Log.i("query_Status", arrivetime);
                     trainsData = query.getData();
                     makeLists(true);
                     mprocess_layout.setVisibility(View.INVISIBLE);
@@ -292,8 +291,6 @@ public class TicketsActivity extends AppCompatActivity {
                 Log.i("x_statusCode", response.code()+"");
                 try{
                     query = response.body();
-                    String arrivetime = query.getData().get(0).getQueryLeftNewDTO().getArriveTime();
-                    Log.i("query_x_Status", arrivetime);
                     trainsData = query.getData();
                     makeLists(true);
                 }catch (Exception e){
