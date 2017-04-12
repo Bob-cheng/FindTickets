@@ -8,7 +8,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.SwipeDismissBehavior;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,11 +46,21 @@ public class HistoryFragment extends Fragment {
     private HashMap<String, String> reversePlaceMap = MainActivity.reversePlaceMap;
     private String myusername = MainActivity.myusername;
     private String myemail = MainActivity.myemail;
+    private TextView processingHint;
     protected static Retrofit retrofit;
     private static final String BASE_URL = SignUpActivity.BASE_URL;
-    protected List<Record> records;
     private RecyclerView mRecyclerView;
     private MyRecyclerAdapter myRecyclerAdapter = null;
+    private MainActivity myMainActivity;
+    protected TextView no_historyHint;
+    protected SwipeRefreshLayout refreshLayout;
+    protected SwipeRefreshLayout.OnRefreshListener refreshListener= new
+            SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    initList(false);
+                }
+            };
     public HistoryFragment() {
         // Required empty public constructor
     }
@@ -81,6 +93,8 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        myMainActivity = (MainActivity) getActivity();
+        processingHint = (TextView) getView().findViewById(R.id.processingHint);
         addhistory = (FloatingActionButton) getView().findViewById(R.id.addhistory);
         addhistory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,39 +103,63 @@ public class HistoryFragment extends Fragment {
             }
         });
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler);
+        no_historyHint = (TextView) getView().findViewById(R.id.no_history);
+        refreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.refresh);
+
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        initList();
+        processingHint.setVisibility(View.INVISIBLE);
+        no_historyHint.setVisibility(View.INVISIBLE);
+        initList(true);
+        refreshLayout.setColorSchemeColors(Color.BLUE);
+        refreshLayout.setOnRefreshListener(refreshListener);
 
     }
 
-    protected void initList(){
+    private void initList(boolean isfirst){
+
+        if(isfirst){
+            myMainActivity.progressBar.setVisibility(View.VISIBLE);
+            processingHint.setVisibility(View.VISIBLE);
+        }
+        refreshLayout.setRefreshing(true);
         IRecordsGetAPIService iRecordsGetAPIService = retrofit.create(IRecordsGetAPIService.class);
         Call<List<Record>> call = iRecordsGetAPIService.getRecords(myemail);
         call.enqueue(new Callback<List<Record>>() {
             @Override
             public void onResponse(Call<List<Record>> call, Response<List<Record>> response) {
                 try{
-                    records = response.body();
+                    List<Record> records = response.body();
                     Log.i("records", records.size() + "");
+                    if(records.size() == 0){
+                        no_historyHint.setVisibility(View.VISIBLE);
+                    }else {
+                        no_historyHint.setVisibility(View.INVISIBLE);
+                    }
                     if(myRecyclerAdapter == null){
                         //创建adapter
-                        myRecyclerAdapter = new MyRecyclerAdapter(getContext(), records);
+                        myRecyclerAdapter = new MyRecyclerAdapter(getContext(), records, HistoryFragment.this);
                         myRecyclerAdapter.setOnItemClickListener(new MyRecyclerAdapter.OnRecyclerViewItemClickListener() {
                             @Override
                             public void onItemClick(View view) {
-                                String date = ((TextView)view.findViewById(R.id.date)).getText().toString();
+                                /*String date = ((TextView)view.findViewById(R.id.date)).getText().toString();
                                 String start = ((TextView)view.findViewById(R.id.start_from)).getText().toString();
                                 String end = ((TextView)view.findViewById(R.id.end_to)).getText().toString();
-                                String type = ((TextView)view.findViewById(R.id.ticket_type)).getText().toString();
+                                String type = ((TextView)view.findViewById(R.id.ticket_type)).getText().toString();*/
+                                int pos = mRecyclerView.getChildAdapterPosition(view);
+                                Record record = myRecyclerAdapter.records.get(pos);
+                                String date = record.getDate();
+                                String start = record.getStartFrom();
+                                String end = record.getEndTo();
+                                String type = record.getTicketType();
+
                                 launchTicketsActivity(start, end, date, type);
                             }
 
                             @Override
                             public void onItemLongClick(View view) {
                                 //长按删除
-                                int position = mRecyclerView.getChildPosition(view);
+                                int position = mRecyclerView.getChildAdapterPosition(view);
                                 myRecyclerAdapter.removeItem(position);
                             }
                         });
@@ -134,12 +172,19 @@ public class HistoryFragment extends Fragment {
 
                 }catch (Exception e){
                     Log.e("get_records", "data error");
+                }finally {
+                    myMainActivity.progressBar.setVisibility(View.INVISIBLE);
+                    processingHint.setVisibility(View.INVISIBLE);
+                    refreshLayout.setRefreshing(false);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Record>> call, Throwable t) {
                 Log.e("net_failure", t.toString());
+                myMainActivity.progressBar.setVisibility(View.INVISIBLE);
+                processingHint.setVisibility(View.INVISIBLE);
+                refreshLayout.setRefreshing(false);
             }
         });
     }
@@ -172,17 +217,19 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
     }
 
     private Context mContext;
-    private List<Record> records;
+    List<Record> records;
     private OnRecyclerViewItemClickListener mOnItemClickListener = null;
+    private Fragment myFragment;
 
     public void setOnItemClickListener(OnRecyclerViewItemClickListener listener) {
         mOnItemClickListener = listener;
     }
 
     //适配器初始化
-    public MyRecyclerAdapter(Context context,List<Record> records) {
+    public MyRecyclerAdapter(Context context,List<Record> records, Fragment f) {
         mContext=context;
         this.records=records;
+        this.myFragment = f;
     }
 
 
@@ -200,6 +247,11 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
                     if(result.get("status")){
                         Toast.makeText(mContext, "删除成功", Toast.LENGTH_LONG).show();
                         records.remove(position);
+                        if(records.size() == 0){
+                            ((HistoryFragment)myFragment).no_historyHint.setVisibility(View.VISIBLE);
+                        }else {
+                            ((HistoryFragment)myFragment).no_historyHint.setVisibility(View.INVISIBLE);
+                        }
                         notifyItemRemoved(position);
                     }else {
                         Log.e("removeItem", "服务器数据错误");

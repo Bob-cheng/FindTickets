@@ -1,6 +1,8 @@
 package space.bobcheng.myapplication;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
@@ -11,8 +13,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +33,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity implements HistoryFragment.MyCallback{
@@ -39,29 +47,11 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
     public static HashMap<String, String> reversePlaceMap;
     private BottomNavigationView navigation;
     private ViewPager mViewpager;
+    protected ProgressBar progressBar;
+    private long firstTime = 0;
     private ArrayList<Fragment> mViews = new ArrayList<>();
-    public static String myusername = "czy@gmail.com";//debug 先写死
-    public static String myemail = "123123@gmail.com"; //debug 先写死
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_dashboard:
-                    mViewpager.setCurrentItem(0, true);
-                    title.setText(getResources().getString(R.string.title_check));
-                    return true;
-                case R.id.navigation_notifications:
-                    mViewpager.setCurrentItem(1, true);
-                    title.setText(getResources().getString(R.string.title_history));
-                    return true;
-            }
-            return false;
-        }
-
-    };
+    public static String myusername;// = "czy@gmail.com";//debug 先写死
+    public static String myemail;// = "123123@gmail.com"; //debug 先写死
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +60,8 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
 
         getPlaceMap();
         getReversePlacemap();
-        // sayHello(); //debug 暂时不用调用
+        sayHello(); //debug 暂时不用调用
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mViewpager = (ViewPager) findViewById(R.id.content);
@@ -83,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
         mViews.add(checkfragment);
         mViews.add(historyFragment);
 
+        progressBar.setVisibility(View.INVISIBLE);
 
 
         toolbar.setTitle("");
@@ -94,11 +86,30 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                onKeyDown(KeyEvent.KEYCODE_BACK,
+                        new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
             }
         });
 
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.navigation_dashboard:
+                        mViewpager.setCurrentItem(0, true);
+                        title.setText(getResources().getString(R.string.title_check));
+                        return true;
+                    case R.id.navigation_notifications:
+                        mViewpager.setCurrentItem(1, true);
+                        title.setText(getResources().getString(R.string.title_history));
+                        ((HistoryFragment)historyFragment).refreshListener.onRefresh();
+                        return true;
+                }
+                return false;
+            }
+
+        });
         navigation.setSelectedItemId(R.id.navigation_dashboard);
         title.setText(getResources().getString(R.string.title_check));
         setmViewpagerLogic();
@@ -177,5 +188,27 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
     @Override
     public void onChangeFragment() {
         navigation.setSelectedItemId(R.id.navigation_dashboard);
+        openSoftKeyBord(this, ((CheckFragment)checkfragment).start_place);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            long secondTime = System.currentTimeMillis();
+            if ( secondTime - firstTime < 2000) {
+                System.exit(0);
+            } else {
+                Snackbar.make(mViewpager, "再按一次退出程序", Snackbar.LENGTH_SHORT).show();
+                firstTime = System.currentTimeMillis();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    //打开输入法
+    private void openSoftKeyBord(Context context, View v){
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(v, 0);
     }
 }

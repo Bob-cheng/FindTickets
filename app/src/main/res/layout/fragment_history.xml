@@ -6,11 +6,34 @@
     tools:context="space.bobcheng.myapplication.HistoryFragment">
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp"/>
+    <TextView
+        android:id="@+id/processingHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="正在加载，请稍候..."
+        android:layout_gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/no_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="             还没有记录哦...\n查票后点击右上角可添加记录\n         长按记录可以删除"
+        />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/addhistory"

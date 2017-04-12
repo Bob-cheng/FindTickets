@@ -36,8 +36,9 @@ import java.util.HashMap;
 public class CheckFragment extends Fragment {
     private EditText start_time;
     private DatePickerDialog mTimeDialog;
-    private EditText start_place;
+    protected EditText start_place;
     private EditText end_place;
+    protected Button mSubmitBtn;
     private CoordinatorLayout rootLayout;
     private HashMap<String, String> placeMap = MainActivity.placeMap;
     private HashMap<Integer, String> numberMap = NumberMap.map;
@@ -79,16 +80,14 @@ public class CheckFragment extends Fragment {
         start_place = (EditText) getView().findViewById(R.id.check_start);
         end_place = (EditText) getView().findViewById(R.id.check_end);
         rootLayout = (CoordinatorLayout) getView().findViewById(R.id.root_layout);
-        Button mSubmitBtn = (Button) getView().findViewById(R.id.submit);
+        mSubmitBtn = (Button) getView().findViewById(R.id.submit);
         RadioGroup rg = (RadioGroup) getView().findViewById(R.id.ticket_type);
-
+        mSubmitBtn.requestFocus();
         View.OnFocusChangeListener loseFcloseKey = new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus){
                     closeSoftKeyBord(getActivity(), v);
-                }else {
-                    openSoftKeyBord(getActivity(), v);
                 }
             }
         };
@@ -164,6 +163,7 @@ public class CheckFragment extends Fragment {
                                 public void onClick(View v) {
                                     end_place.requestFocus();
                                     openSoftKeyBord(getActivity(), end_place);
+
                                 }
                             }).show();
 

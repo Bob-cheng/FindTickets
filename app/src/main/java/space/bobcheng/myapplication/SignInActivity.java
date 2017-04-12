@@ -149,10 +149,12 @@ public class SignInActivity extends AppCompatActivity {
         data.putBoolean("signup", false);
         intent.putExtras(data);
         startActivity(intent);
+        this.finish();
     }
     protected void gotoSignUp(View v){
         Intent toSignUp = new Intent(this, SignUpActivity.class);
         startActivity(toSignUp);
+        this.finish();
     }
 
 }

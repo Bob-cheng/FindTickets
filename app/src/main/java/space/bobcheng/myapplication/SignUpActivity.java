@@ -196,10 +196,12 @@ public class SignUpActivity extends AppCompatActivity {
         data.putBoolean("signup", true);
         intent.putExtras(data);
         startActivity(intent);
+        this.finish();
     }
     protected void backtoSignIn(View v){
         Intent toSignIn = new Intent(this, SignInActivity.class);
         startActivity(toSignIn);
+        this.finish();
     }
 
     //打开输入法

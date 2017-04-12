@@ -12,7 +12,7 @@
         android:padding="5dp">
         <TextView
             android:id="@+id/date"
-            android:layout_width="120dp"
+            android:layout_width="130dp"
             android:layout_height="60dp"
             android:gravity="center"
             android:text="2017-04-05"
