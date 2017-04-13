@@ -58,7 +58,7 @@ public class HistoryFragment extends Fragment {
             SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    initList(false);
+                    initList();
                 }
             };
     public HistoryFragment() {
@@ -110,18 +110,13 @@ public class HistoryFragment extends Fragment {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         processingHint.setVisibility(View.INVISIBLE);
         no_historyHint.setVisibility(View.INVISIBLE);
-        initList(true);
+        initList();
         refreshLayout.setColorSchemeColors(Color.BLUE);
         refreshLayout.setOnRefreshListener(refreshListener);
 
     }
 
-    private void initList(boolean isfirst){
-
-        if(isfirst){
-            myMainActivity.progressBar.setVisibility(View.VISIBLE);
-            processingHint.setVisibility(View.VISIBLE);
-        }
+    private void initList(){
         refreshLayout.setRefreshing(true);
         IRecordsGetAPIService iRecordsGetAPIService = retrofit.create(IRecordsGetAPIService.class);
         Call<List<Record>> call = iRecordsGetAPIService.getRecords(myemail);
@@ -173,7 +168,6 @@ public class HistoryFragment extends Fragment {
                 }catch (Exception e){
                     Log.e("get_records", "data error");
                 }finally {
-                    myMainActivity.progressBar.setVisibility(View.INVISIBLE);
                     processingHint.setVisibility(View.INVISIBLE);
                     refreshLayout.setRefreshing(false);
                 }
@@ -182,7 +176,6 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onFailure(Call<List<Record>> call, Throwable t) {
                 Log.e("net_failure", t.toString());
-                myMainActivity.progressBar.setVisibility(View.INVISIBLE);
                 processingHint.setVisibility(View.INVISIBLE);
                 refreshLayout.setRefreshing(false);
             }

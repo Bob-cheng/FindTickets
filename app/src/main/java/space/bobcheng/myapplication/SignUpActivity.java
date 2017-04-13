@@ -54,6 +54,16 @@ public class SignUpActivity extends AppCompatActivity {
         passwd_again = (EditText)findViewById(R.id.passwd_again);
         backToSignIn = (TextView)findViewById(R.id.sign_in);
         mSubmmit = (Button) findViewById(R.id.button);
+        TextView to_sign_in = (TextView) findViewById(R.id.sign_in);
+
+        to_sign_in.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toSignIn = new Intent(SignUpActivity.this, SignInActivity.class);
+                startActivity(toSignIn);
+                SignUpActivity.this.finish();
+            }
+        });
 
         View.OnFocusChangeListener  focusChangeListener  = new View.OnFocusChangeListener() {
             @Override
@@ -198,12 +208,6 @@ public class SignUpActivity extends AppCompatActivity {
         startActivity(intent);
         this.finish();
     }
-    protected void backtoSignIn(View v){
-        Intent toSignIn = new Intent(this, SignInActivity.class);
-        startActivity(toSignIn);
-        this.finish();
-    }
-
     //打开输入法
     private void openSoftKeyBord(Context context, View v){
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);

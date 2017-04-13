@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        find_ticket_sign {
+            keyAlias 'find_ticket_key'
+            keyPassword '8863432529'
+            storeFile file('/home/bob/Documents/find_tickets/find_ticket_key.jks')
+            storePassword '8863432529'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -16,6 +24,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.find_ticket_sign
         }
     }
 }

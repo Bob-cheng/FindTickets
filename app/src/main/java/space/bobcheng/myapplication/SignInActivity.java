@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,6 +42,7 @@ public class SignInActivity extends AppCompatActivity {
         mypassword = (EditText)findViewById(R.id.passwd);
         activitymain = (ConstraintLayout) findViewById(R.id.activity_main);
         mButton = (Button) findViewById(R.id.button);
+        TextView to_sign_up = (TextView) findViewById(R.id.sign_up);
         activitymain.setFocusable(true);
         activitymain.setFocusableInTouchMode(true);
         activitymain.requestFocus();
@@ -64,7 +66,14 @@ public class SignInActivity extends AppCompatActivity {
                 }
             }
         };
-
+        to_sign_up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toSignUp = new Intent(SignInActivity.this, SignUpActivity.class);
+                startActivity(toSignUp);
+                SignInActivity.this.finish();
+            }
+        });
         myusername.setOnFocusChangeListener(focuslistener);
         mypassword.setOnFocusChangeListener(focuslistener);
         activitymain.setOnClickListener(new View.OnClickListener() {
@@ -151,10 +160,6 @@ public class SignInActivity extends AppCompatActivity {
         startActivity(intent);
         this.finish();
     }
-    protected void gotoSignUp(View v){
-        Intent toSignUp = new Intent(this, SignUpActivity.class);
-        startActivity(toSignUp);
-        this.finish();
-    }
+
 
 }
