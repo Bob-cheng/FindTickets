@@ -15,6 +15,6 @@ import space.bobcheng.myapplication.jsonClass.Record;
 
 public interface IDropRecordAPIService {
     @FormUrlEncoded
-    @POST("droprecord")
+    @POST("droprecord/whole")
     Call<Map<String, Boolean>> dropRecord(@Field("id") String id);
 }

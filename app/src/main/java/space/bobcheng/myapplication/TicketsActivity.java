@@ -1,5 +1,7 @@
 package space.bobcheng.myapplication;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
@@ -9,6 +11,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
@@ -131,8 +135,6 @@ public class TicketsActivity extends AppCompatActivity {
                 .build();
         query_date.setText(inputMessage.get(2));
         initMyQuery();
-
-
     }
     //https://shanksleo.gitbooks.io/cookbook/content/view/toolbar.html
     @Override
@@ -140,6 +142,7 @@ public class TicketsActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.tickets_activity_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
 
     //添加到历史记录的方法
     private void addToHistory(){
@@ -198,6 +201,7 @@ public class TicketsActivity extends AppCompatActivity {
                 item.put("start_place", queryLeftNewDTO.getFromStationName());
                 item.put("end_place", queryLeftNewDTO.getToStationName());
                 item.put("train_num", queryLeftNewDTO.getStationTrainCode());
+                //历时的格式调整
                 String lishi = queryLeftNewDTO.getLishi().replace(':', '时')+"分";
                 if(lishi.startsWith("00")){
                     lishi = lishi.substring(4);
@@ -205,6 +209,7 @@ public class TicketsActivity extends AppCompatActivity {
                     lishi = lishi.substring(1);
                 }
                 item.put("lishi", lishi);
+                item.put("original_lishi", queryLeftNewDTO.getLishi());
 
                 if(checkYouWu(queryLeftNewDTO.getZyNum()))
                     Youwu = "有票";
@@ -234,7 +239,7 @@ public class TicketsActivity extends AppCompatActivity {
             }
 
         }
-        SimpleAdapter simpleAdapter = new SimpleAdapter(this, listItems,
+        MySimpleAdapter simpleAdapter = new MySimpleAdapter(this, listItems,
                 R.layout.ticket_item,
                 new String[]{"start_time", "end_time", "start_place", "end_place", "train_num",
                                 "lishi", "seats_first_num", "seats_second_num", "seats_rw_num",
@@ -366,4 +371,21 @@ public class TicketsActivity extends AppCompatActivity {
     }
 }
 
+class MySimpleAdapter extends SimpleAdapter{
+    Context mContext;
+    public MySimpleAdapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to) {
+        super(context, data, resource, from, to);
+        mContext = context;
+    }
 
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View v =  super.getView(position, convertView, parent);
+        TextView status = (TextView) v.findViewById(R.id.status);
+        if(status.getText().toString().equals("有票"))
+            status.setTextColor(mContext.getResources().getColor(android.R.color.holo_green_dark));
+        else
+            status.setTextColor(Color.RED);
+        return v;
+    }
+}
