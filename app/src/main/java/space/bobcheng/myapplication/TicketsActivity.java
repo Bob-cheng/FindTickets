@@ -30,6 +30,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import space.bobcheng.myapplication.apiService.IAddCertainAPIService;
 import space.bobcheng.myapplication.apiService.IAddRecordAPIService;
 import space.bobcheng.myapplication.apiService.IRecordsGetAPIService;
 import space.bobcheng.myapplication.apiService.ItrainQueryAPIService;
@@ -156,6 +157,39 @@ public class TicketsActivity extends AppCompatActivity {
                 if(!addRecInfo.getStatus()){
                     if(addRecInfo.getExisted()){
                         Snackbar.make(mframeLayout, "已经加入记录，不要重复添加", Snackbar.LENGTH_LONG).show();
+                    }else {
+                        Snackbar.make(mframeLayout, "服务器错误", Snackbar.LENGTH_LONG).show();
+                    }
+                }else{
+                    Snackbar.make(mframeLayout, "记录成功", Snackbar.LENGTH_LONG).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<AddRecInfo> call, Throwable t) {
+                Log.e("add_to_history", t.toString());
+                Snackbar.make(mframeLayout, "连接失败，请检查网络设置", Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    //将某一列火车添加到历史记录
+    private void addCertainToHistory(String[] message){
+        IAddCertainAPIService iAddCertainAPIService = retrofit.create(IAddCertainAPIService.class);
+        Call<AddRecInfo> call = iAddCertainAPIService.addCertain(message[0], message[1], message[2],
+                message[3], message[4], message[5], message[6], message[7],
+                message[8], message[9], message[10], message[11], message[12], message[13],
+                message[14], message[15]);
+        call.enqueue(new Callback<AddRecInfo>() {
+            @Override
+            public void onResponse(Call<AddRecInfo> call, Response<AddRecInfo> response) {
+
+                AddRecInfo addRecInfo = response.body();
+                if(!addRecInfo.getStatus()){
+                    if(addRecInfo.getExisted()){
+                        Log.i("CERTAIN_record", "response3");
+                        Snackbar.make(mframeLayout, "已经加入记录，不要重复添加", Snackbar.LENGTH_LONG).show();
+                    }else {
+                        Snackbar.make(mframeLayout, "服务器错误", Snackbar.LENGTH_LONG).show();
                     }
                 }else{
                     Snackbar.make(mframeLayout, "记录成功", Snackbar.LENGTH_LONG).show();
@@ -187,7 +221,7 @@ public class TicketsActivity extends AppCompatActivity {
         }
 
         Log.i("List", "start to make list");
-        List<Map<String, Object>> listItems =
+        final List<Map<String, Object>> listItems =
                 new ArrayList<>();
         ArrayList<String> options = getOptions();
         for(int i = 0; i < trainsData.size(); i++){
@@ -251,6 +285,31 @@ public class TicketsActivity extends AppCompatActivity {
                         R.id.status}
                 );
         mTicketsListView.setAdapter(simpleAdapter);
+        mTicketsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                String[] message = new String[16];
+                Map<String, Object> certain_item = listItems.get(position);
+                message[0] = MainActivity.myemail;
+                message[1] = (String)certain_item.get("start_place");
+                message[2] = (String)certain_item.get("end_place");
+                message[3] = inputMessage.get(2);
+                message[4] = (String)certain_item.get("start_time");
+                message[5] = (String)certain_item.get("end_time");
+                message[6] = (String)certain_item.get("original_lishi");
+                message[7] = (String)certain_item.get("train_num");
+                message[8] = (String)certain_item.get("seats_first_num");
+                message[9] = (String)certain_item.get("seats_second_num");
+                message[10] = (String)certain_item.get("seats_rw_num");
+                message[11] = (String)certain_item.get("seats_yw_num");
+                message[12] = (String)certain_item.get("seats_yz_num");
+                message[13] = (String)certain_item.get("seats_wz_num");
+                message[14] = inputMessage.get(3);
+                message[15] = isLeftTicket+"";
+                addCertainToHistory(message);
+                return false;
+            }
+        });
         Log.i("List", "finish make list view");
     }
 

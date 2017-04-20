@@ -13,9 +13,9 @@ import space.bobcheng.myapplication.jsonClass.SignInInfo;
 /**
  * Created by bob on 17-4-10.
  */
-
+//TODO 这个接口需要改到 MyRecord 上， 同时需要改变的是对这个接口的调用方法
 public interface IRecordsGetAPIService {
     @FormUrlEncoded
     @POST("records")
-    Call<List<MyRecord>> getRecords(@Field("email") String email);
+    Call<List<Record>> getRecords(@Field("email") String email);
 }

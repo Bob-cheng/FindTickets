@@ -18,3 +18,4 @@ public interface IDropRecordAPIService {
     @POST("droprecord/whole")
     Call<Map<String, Boolean>> dropRecord(@Field("id") String id);
 }
+//TODO 增加一个droprecord/certain的接口用来删除某个特定的列车记录
