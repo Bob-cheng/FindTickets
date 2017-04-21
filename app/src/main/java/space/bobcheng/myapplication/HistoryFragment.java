@@ -33,6 +33,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import space.bobcheng.myapplication.apiService.IDropRecordAPIService;
 import space.bobcheng.myapplication.apiService.IRecordsGetAPIService;
+import space.bobcheng.myapplication.jsonClass.CertainRecord;
+import space.bobcheng.myapplication.jsonClass.MyRecord;
 import space.bobcheng.myapplication.jsonClass.Record;
 
 
@@ -51,7 +53,7 @@ public class HistoryFragment extends Fragment {
     private static final String BASE_URL = SignUpActivity.BASE_URL;
     private RecyclerView mRecyclerView;
     private MyRecyclerAdapter myRecyclerAdapter = null;
-    private MainActivity myMainActivity;
+    protected MainActivity myMainActivity;
     protected TextView no_historyHint;
     protected SwipeRefreshLayout refreshLayout;
     protected SwipeRefreshLayout.OnRefreshListener refreshListener= new
@@ -119,35 +121,32 @@ public class HistoryFragment extends Fragment {
     private void initList(){
         refreshLayout.setRefreshing(true);
         IRecordsGetAPIService iRecordsGetAPIService = retrofit.create(IRecordsGetAPIService.class);
-        Call<List<Record>> call = iRecordsGetAPIService.getRecords(myemail);
-        call.enqueue(new Callback<List<Record>>() {
+        Call<MyRecord> call = iRecordsGetAPIService.getRecords(myemail);
+        call.enqueue(new Callback<MyRecord>() {
             @Override
-            public void onResponse(Call<List<Record>> call, Response<List<Record>> response) {
+            public void onResponse(Call<MyRecord> call, Response<MyRecord> response) {
                 try{
-                    List<Record> records = response.body();
+                    List<Record> records = response.body().getRecords();
+                    List<CertainRecord> certainRecords = response.body().getCertainRecords();
                     Log.i("records", records.size() + "");
-                    if(records.size() == 0){
+                    Log.i("certain_records", certainRecords.size() + "");
+                    if(records.size() == 0 && certainRecords.size() == 0){
                         no_historyHint.setVisibility(View.VISIBLE);
                     }else {
                         no_historyHint.setVisibility(View.INVISIBLE);
                     }
                     if(myRecyclerAdapter == null){
                         //创建adapter
-                        myRecyclerAdapter = new MyRecyclerAdapter(getContext(), records, HistoryFragment.this);
+                        myRecyclerAdapter = new MyRecyclerAdapter(getContext(), records, certainRecords, HistoryFragment.this);
                         myRecyclerAdapter.setOnItemClickListener(new MyRecyclerAdapter.OnRecyclerViewItemClickListener() {
                             @Override
                             public void onItemClick(View view) {
-                                /*String date = ((TextView)view.findViewById(R.id.date)).getText().toString();
-                                String start = ((TextView)view.findViewById(R.id.start_from)).getText().toString();
-                                String end = ((TextView)view.findViewById(R.id.end_to)).getText().toString();
-                                String type = ((TextView)view.findViewById(R.id.ticket_type)).getText().toString();*/
                                 int pos = mRecyclerView.getChildAdapterPosition(view);
                                 Record record = myRecyclerAdapter.records.get(pos);
                                 String date = record.getDate();
                                 String start = record.getStartFrom();
                                 String end = record.getEndTo();
                                 String type = record.getTicketType();
-
                                 launchTicketsActivity(start, end, date, type);
                             }
 
@@ -162,6 +161,7 @@ public class HistoryFragment extends Fragment {
                     }else {
                         //如果不是第一次创建adapter 就只用更新record就好
                         myRecyclerAdapter.setRecords(records);
+                        myRecyclerAdapter.setCertainRecords(certainRecords);
                         myRecyclerAdapter.notifyDataSetChanged();
                     }
 
@@ -174,7 +174,7 @@ public class HistoryFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<List<Record>> call, Throwable t) {
+            public void onFailure(Call<MyRecord> call, Throwable t) {
                 Log.e("net_failure", t.toString());
                 processingHint.setVisibility(View.INVISIBLE);
                 refreshLayout.setRefreshing(false);
@@ -211,6 +211,7 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
 
     private Context mContext;
     List<Record> records;
+    List<CertainRecord> certainRecords;
     private OnRecyclerViewItemClickListener mOnItemClickListener = null;
     private Fragment myFragment;
 
@@ -219,28 +220,45 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
     }
 
     //适配器初始化
-    public MyRecyclerAdapter(Context context,List<Record> records, Fragment f) {
+    public MyRecyclerAdapter(Context context,List<Record> records,
+                             List<CertainRecord> certainRecords, Fragment f) {
         mContext=context;
         this.records=records;
+        this.certainRecords = certainRecords;
         this.myFragment = f;
     }
 
 
-    protected void removeItem(int pos){
+    protected void removeItem(final int pos){
+        ((HistoryFragment)myFragment).myMainActivity.progressBar.setVisibility(View.VISIBLE);
         final int position = pos;
-        String id = records.get(position).getId()+"";
-        IDropRecordAPIService iDropRecordAPIService =
-                HistoryFragment.retrofit.create(IDropRecordAPIService.class);
-        Call<Map<String, Boolean>> call = iDropRecordAPIService.dropRecord(id);
+        Call<Map<String, Boolean>> call;
+        if(position < records.size()){
+            String id = records.get(position).getId()+"";
+            IDropRecordAPIService iDropRecordAPIService =
+                    HistoryFragment.retrofit.create(IDropRecordAPIService.class);
+            call = iDropRecordAPIService.dropRecord(id, "whole");
+        }else{
+            String id = certainRecords.get(position - records.size()).getId()+"";
+            IDropRecordAPIService iDropRecordAPIService =
+                    HistoryFragment.retrofit.create(IDropRecordAPIService.class);
+            call = iDropRecordAPIService.dropRecord(id, "certain");
+        }
         call.enqueue(new Callback<Map<String, Boolean>>() {
             @Override
             public void onResponse(Call<Map<String, Boolean>> call, Response<Map<String, Boolean>> response) {
+                ((HistoryFragment)myFragment).myMainActivity.progressBar.setVisibility(View.INVISIBLE);
                 try{
                     Map<String, Boolean> result = response.body();
                     if(result.get("status")){
                         Toast.makeText(mContext, "删除成功", Toast.LENGTH_LONG).show();
-                        records.remove(position);
-                        if(records.size() == 0){
+
+                        if(position < records.size()){
+                            records.remove(position);
+                        }else {
+                            certainRecords.remove(position - records.size());
+                        }
+                        if(records.size() == 0 && certainRecords.size() == 0){
                             ((HistoryFragment)myFragment).no_historyHint.setVisibility(View.VISIBLE);
                         }else {
                             ((HistoryFragment)myFragment).no_historyHint.setVisibility(View.INVISIBLE);
@@ -259,6 +277,7 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
 
             @Override
             public void onFailure(Call<Map<String, Boolean>> call, Throwable t) {
+                ((HistoryFragment)myFragment).myMainActivity.progressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(mContext, "请检查网络连接", Toast.LENGTH_LONG).show();
                 Log.e("removeItem", t.toString());
             }
@@ -269,35 +288,82 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
         this.records = records;
     }
 
+    protected void  setCertainRecords(List<CertainRecord> certainRecords){
+        this.certainRecords = certainRecords;
+    }
+
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.history_item, viewGroup, false);
-        view.setOnClickListener(this);
-        view.setOnLongClickListener(this);
-        return new MyViewHolder(view);
+    public int getItemViewType(int position) {
+        if(position<records.size())
+            return 0;
+        else
+            return 1;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        if(viewType == 0){
+            View view = LayoutInflater.from(mContext).inflate(R.layout.history_item, viewGroup, false);
+            view.setOnClickListener(this);
+            view.setOnLongClickListener(this);
+            return new MyViewHolder(view);
+        }else {
+            View view = LayoutInflater.from(mContext).inflate(R.layout.ticket_item, viewGroup, false);
+            view.setOnLongClickListener(this);
+            return new MyCertainViewHolder(view);
+        }
+
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        MyViewHolder myViewHolder = (MyViewHolder) holder;
-        Record record = records.get(position);
-        myViewHolder.date.setText(record.getDate());
-        myViewHolder.start_from.setText(reversePlaceMap.get(record.getStartFrom()));
-        myViewHolder.end_to.setText(reversePlaceMap.get(record.getEndTo()));
+        if(holder instanceof MyViewHolder){
+            MyViewHolder myViewHolder = (MyViewHolder) holder;
+            Record record = records.get(position);
+            myViewHolder.date.setText(record.getDate());
+            myViewHolder.start_from.setText(reversePlaceMap.get(record.getStartFrom()));
+            myViewHolder.end_to.setText(reversePlaceMap.get(record.getEndTo()));
 
-        if(record.getTicketLeft()){
-            myViewHolder.ticket_status.setTextColor(mContext.getResources().getColor(android.R.color.holo_green_dark));
-            myViewHolder.ticket_status.setText("有票");
-        }else {
-            myViewHolder.ticket_status.setTextColor(Color.RED);
-            myViewHolder.ticket_status.setText("无票");
+            if(record.getTicketLeft()){
+                myViewHolder.ticket_status.setTextColor(mContext.getResources().getColor(android.R.color.holo_green_dark));
+                myViewHolder.ticket_status.setText("有票");
+            }else {
+                myViewHolder.ticket_status.setTextColor(Color.RED);
+                myViewHolder.ticket_status.setText("无票");
+            }
+            myViewHolder.ticket_type.setText(record.getTicketType().equals("ADULT")?"成人票":"学生票");
+        }else if(holder instanceof MyCertainViewHolder){
+            MyCertainViewHolder myCertainViewHolder = (MyCertainViewHolder) holder;
+            CertainRecord certainRecord = certainRecords.get(position - records.size());
+            myCertainViewHolder.start_time.setText(certainRecord.getStartTime());
+            myCertainViewHolder.end_time.setText(certainRecord.getEndTime());
+            myCertainViewHolder.start_place.setText(certainRecord.getStartFrom());
+            myCertainViewHolder.end_place.setText(certainRecord.getEndTo());
+            myCertainViewHolder.train_num.setText(certainRecord.getTrainId());
+            myCertainViewHolder.lishi.setText(certainRecord.getLishi());
+            if(certainRecord.getTicketLeft().equals("1")){
+                myCertainViewHolder.status.setTextColor(mContext.getResources().getColor(android.R.color.holo_green_dark));
+                myCertainViewHolder.status.setText("有票");
+            }else {
+                myCertainViewHolder.status.setTextColor(Color.RED);
+                myCertainViewHolder.status.setText("无票");
+            }
+            myCertainViewHolder.seats_first_num.setText(certainRecord.getFirstSeats());
+            myCertainViewHolder.seats_second_num.setText(certainRecord.getSecondSeats());
+            myCertainViewHolder.seats_rw_num.setText(certainRecord.getRw());
+            myCertainViewHolder.seats_yw_num.setText(certainRecord.getYw());
+            myCertainViewHolder.seats_yz_num.setText(certainRecord.getYz());
+            myCertainViewHolder.seats_wz_num.setText(certainRecord.getWz());
+            myCertainViewHolder.ticket_date.setText(certainRecord.getDate());
+            myCertainViewHolder.ticket_type.
+                    setText(certainRecord.getTicketType().equals("ADULT")?"成人票":"学生票");
         }
-        myViewHolder.ticket_type.setText(record.getTicketType().equals("ADULT")?"成人票":"学生票");
+
     }
 
     @Override
     public int getItemCount() {
-        return records.size();
+        return records.size()+certainRecords.size();
     }
 
     @Override
@@ -330,6 +396,45 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
             end_to =  (TextView) view.findViewById(R.id.end_to);
             ticket_status = (TextView) view.findViewById(R.id.ticket_status);
             ticket_type = (TextView) view.findViewById(R.id.ticket_type);
+        }
+    }
+
+    private class MyCertainViewHolder extends RecyclerView.ViewHolder {
+        protected TextView start_time;
+        protected TextView end_time;
+        protected TextView start_place;
+        protected TextView end_place;
+        protected TextView train_num;
+        protected TextView lishi;
+        protected TextView status;
+        protected TextView seats_first_num;
+        protected TextView seats_second_num;
+        protected TextView seats_rw_num;
+        protected TextView seats_yw_num;
+        protected TextView seats_yz_num;
+        protected TextView seats_wz_num;
+        protected TextView ticket_date;
+        protected TextView ticket_type;
+
+
+        public MyCertainViewHolder(View view)
+        {
+            super(view);
+            start_time         =(TextView) view.findViewById(R.id.start_time);
+            end_time           =(TextView) view.findViewById(R.id.end_time);
+            start_place        =(TextView) view.findViewById(R.id.start_place);
+            end_place          =(TextView) view.findViewById(R.id.end_place);
+            train_num          =(TextView) view.findViewById(R.id.train_num);
+            lishi              =(TextView) view.findViewById(R.id.lishi);
+            status             =(TextView) view.findViewById(R.id.status);
+            seats_first_num    =(TextView) view.findViewById(R.id.seats_first_num);
+            seats_second_num   =(TextView) view.findViewById(R.id.seats_second_num);
+            seats_rw_num       =(TextView) view.findViewById(R.id.seats_rw_num);
+            seats_yw_num       =(TextView) view.findViewById(R.id.seats_yw_num);
+            seats_yz_num       =(TextView) view.findViewById(R.id.seats_yz_num);
+            seats_wz_num       =(TextView) view.findViewById(R.id.seats_wz_num);
+            ticket_date        =(TextView) view.findViewById(R.id.ticket_date);
+            ticket_type        =(TextView) view.findViewById(R.id.ticket_type);
         }
     }
 }

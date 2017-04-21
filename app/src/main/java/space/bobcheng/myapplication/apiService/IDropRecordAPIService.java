@@ -15,7 +15,6 @@ import space.bobcheng.myapplication.jsonClass.Record;
 
 public interface IDropRecordAPIService {
     @FormUrlEncoded
-    @POST("droprecord/whole")
-    Call<Map<String, Boolean>> dropRecord(@Field("id") String id);
+    @POST("droprecord")
+    Call<Map<String, Boolean>> dropRecord(@Field("id") String id, @Field("table") String table);
 }
-//TODO 增加一个droprecord/certain的接口用来删除某个特定的列车记录

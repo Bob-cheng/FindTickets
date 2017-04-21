@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -54,6 +55,7 @@ public class TicketsActivity extends AppCompatActivity {
     private ArrayList<String> inputMessage;
     private FrameLayout mframeLayout;
     private List<Datum> trainsData = null;
+    private ProgressBar adding;
     private ListView mTicketsListView;
     private int isLeftTicket = 0;
     private View.OnClickListener reconnect = new View.OnClickListener() {
@@ -84,6 +86,8 @@ public class TicketsActivity extends AppCompatActivity {
         mframeLayout  = (FrameLayout) findViewById(R.id.frame_layout);
         mTicketsListView = (ListView) findViewById(R.id.ticket_list);
         TextView query_date = (TextView) findViewById(R.id.query_date);
+        adding = (ProgressBar) findViewById(R.id.adding);
+
 
         toolbar = (Toolbar) findViewById(R.id.tickets_toolbar);
         //http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2014/1118/2006.html
@@ -147,12 +151,14 @@ public class TicketsActivity extends AppCompatActivity {
 
     //添加到历史记录的方法
     private void addToHistory(){
+        adding.setVisibility(View.VISIBLE);
         IAddRecordAPIService iAddRecordAPIService = retrofit.create(IAddRecordAPIService.class);
         Call<AddRecInfo> call = iAddRecordAPIService.addRecord(MainActivity.myemail, inputMessage.get(0),
                 inputMessage.get(1), inputMessage.get(2), inputMessage.get(3), isLeftTicket+"");
         call.enqueue(new Callback<AddRecInfo>() {
             @Override
             public void onResponse(Call<AddRecInfo> call, Response<AddRecInfo> response) {
+                adding.setVisibility(View.INVISIBLE);
                 AddRecInfo addRecInfo = response.body();
                 if(!addRecInfo.getStatus()){
                     if(addRecInfo.getExisted()){
@@ -166,6 +172,7 @@ public class TicketsActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<AddRecInfo> call, Throwable t) {
+                adding.setVisibility(View.INVISIBLE);
                 Log.e("add_to_history", t.toString());
                 Snackbar.make(mframeLayout, "连接失败，请检查网络设置", Snackbar.LENGTH_LONG).show();
             }
@@ -174,6 +181,7 @@ public class TicketsActivity extends AppCompatActivity {
 
     //将某一列火车添加到历史记录
     private void addCertainToHistory(String[] message){
+        adding.setVisibility(View.VISIBLE);
         IAddCertainAPIService iAddCertainAPIService = retrofit.create(IAddCertainAPIService.class);
         Call<AddRecInfo> call = iAddCertainAPIService.addCertain(message[0], message[1], message[2],
                 message[3], message[4], message[5], message[6], message[7],
@@ -182,7 +190,7 @@ public class TicketsActivity extends AppCompatActivity {
         call.enqueue(new Callback<AddRecInfo>() {
             @Override
             public void onResponse(Call<AddRecInfo> call, Response<AddRecInfo> response) {
-
+                adding.setVisibility(View.INVISIBLE);
                 AddRecInfo addRecInfo = response.body();
                 if(!addRecInfo.getStatus()){
                     if(addRecInfo.getExisted()){
@@ -197,6 +205,7 @@ public class TicketsActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<AddRecInfo> call, Throwable t) {
+                adding.setVisibility(View.INVISIBLE);
                 Log.e("add_to_history", t.toString());
                 Snackbar.make(mframeLayout, "连接失败，请检查网络设置", Snackbar.LENGTH_LONG).show();
             }
@@ -305,7 +314,7 @@ public class TicketsActivity extends AppCompatActivity {
                 message[12] = (String)certain_item.get("seats_yz_num");
                 message[13] = (String)certain_item.get("seats_wz_num");
                 message[14] = inputMessage.get(3);
-                message[15] = isLeftTicket+"";
+                message[15] = ((String)certain_item.get("status")).equals("有票")?"1":"0" ;
                 addCertainToHistory(message);
                 return false;
             }

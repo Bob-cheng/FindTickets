@@ -17,5 +17,5 @@ import space.bobcheng.myapplication.jsonClass.SignInInfo;
 public interface IRecordsGetAPIService {
     @FormUrlEncoded
     @POST("records")
-    Call<List<Record>> getRecords(@Field("email") String email);
+    Call<MyRecord> getRecords(@Field("email") String email);
 }
