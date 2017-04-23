@@ -300,8 +300,8 @@ public class TicketsActivity extends AppCompatActivity {
                 String[] message = new String[16];
                 Map<String, Object> certain_item = listItems.get(position);
                 message[0] = MainActivity.myemail;
-                message[1] = (String)certain_item.get("start_place");
-                message[2] = (String)certain_item.get("end_place");
+                message[1] = MainActivity.placeMap.get((String)certain_item.get("start_place"));
+                message[2] = MainActivity.placeMap.get((String)certain_item.get("end_place"));
                 message[3] = inputMessage.get(2);
                 message[4] = (String)certain_item.get("start_time");
                 message[5] = (String)certain_item.get("end_time");

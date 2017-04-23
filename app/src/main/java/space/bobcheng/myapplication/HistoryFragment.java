@@ -337,8 +337,8 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
             CertainRecord certainRecord = certainRecords.get(position - records.size());
             myCertainViewHolder.start_time.setText(certainRecord.getStartTime());
             myCertainViewHolder.end_time.setText(certainRecord.getEndTime());
-            myCertainViewHolder.start_place.setText(certainRecord.getStartFrom());
-            myCertainViewHolder.end_place.setText(certainRecord.getEndTo());
+            myCertainViewHolder.start_place.setText(MainActivity.reversePlaceMap.get(certainRecord.getStartFrom()));
+            myCertainViewHolder.end_place.setText(MainActivity.reversePlaceMap.get(certainRecord.getEndTo()));
             myCertainViewHolder.train_num.setText(certainRecord.getTrainId());
             myCertainViewHolder.lishi.setText(certainRecord.getLishi());
             if(certainRecord.getTicketLeft().equals("1")){
