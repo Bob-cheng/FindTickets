@@ -1,6 +1,5 @@
 package space.bobcheng.myapplication;
 
-import android.app.Service;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -35,22 +34,17 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import space.bobcheng.myapplication.apiService.IAddCertainAPIService;
 import space.bobcheng.myapplication.apiService.IAddRecordAPIService;
-import space.bobcheng.myapplication.apiService.IRecordsGetAPIService;
 import space.bobcheng.myapplication.apiService.ItrainQueryAPIService;
-import space.bobcheng.myapplication.apiService.ItrainQueryAPIService_x;
 import space.bobcheng.myapplication.jsonClass.AddRecInfo;
 import space.bobcheng.myapplication.jsonClass.Datum;
 import space.bobcheng.myapplication.jsonClass.MyQuery;
 import space.bobcheng.myapplication.jsonClass.QueryLeftNewDTO;
 
-import static space.bobcheng.myapplication.MyUtlis.UnsafeHttp.getUnsafeOkHttpClient;
-
-
 
 public class TicketsActivity extends AppCompatActivity {
     private CheckBox [] boxs = new CheckBox[6];
     private MyQuery query = null;
-    private static final String BASE_URL = "http://23.83.231.104:8080/";
+    private static final String BASE_URL = SignUpActivity.BASE_URL;
     private ConstraintLayout mprocess_layout;
     private Toolbar toolbar;
     private Retrofit retrofit;
@@ -306,7 +300,7 @@ public class TicketsActivity extends AppCompatActivity {
         mTicketsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                vibrator.vibrate(500);
+                vibrator.vibrate(100);
                 String[] message = new String[16];
                 Map<String, Object> certain_item = listItems.get(position);
                 message[0] = MainActivity.myemail;

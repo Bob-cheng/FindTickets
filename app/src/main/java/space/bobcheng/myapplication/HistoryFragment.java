@@ -156,7 +156,7 @@ public class HistoryFragment extends Fragment {
                             @Override
                             public void onItemLongClick(View view) {
                                 //长按删除
-                                vibrator.vibrate(500);
+                                vibrator.vibrate(100);
                                 int position = mRecyclerView.getChildAdapterPosition(view);
                                 myRecyclerAdapter.removeItem(position);
                             }
@@ -386,11 +386,11 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
     }
 
     private class MyViewHolder extends RecyclerView.ViewHolder {
-        protected TextView date;
-        protected TextView start_from;
-        protected TextView end_to;
-        protected TextView ticket_status;
-        protected TextView ticket_type;
+        TextView date;
+        TextView start_from;
+        TextView end_to;
+        TextView ticket_status;
+        TextView ticket_type;
 
         public MyViewHolder(View view)
         {
@@ -404,21 +404,21 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
     }
 
     private class MyCertainViewHolder extends RecyclerView.ViewHolder {
-        protected TextView start_time;
-        protected TextView end_time;
-        protected TextView start_place;
-        protected TextView end_place;
-        protected TextView train_num;
-        protected TextView lishi;
-        protected TextView status;
-        protected TextView seats_first_num;
-        protected TextView seats_second_num;
-        protected TextView seats_rw_num;
-        protected TextView seats_yw_num;
-        protected TextView seats_yz_num;
-        protected TextView seats_wz_num;
-        protected TextView ticket_date;
-        protected TextView ticket_type;
+        TextView start_time;
+        TextView end_time;
+        TextView start_place;
+        TextView end_place;
+        TextView train_num;
+        TextView lishi;
+        TextView status;
+        TextView seats_first_num;
+        TextView seats_second_num;
+        TextView seats_rw_num;
+        TextView seats_yw_num;
+        TextView seats_yz_num;
+        TextView seats_wz_num;
+        TextView ticket_date;
+        TextView ticket_type;
 
 
         public MyCertainViewHolder(View view)

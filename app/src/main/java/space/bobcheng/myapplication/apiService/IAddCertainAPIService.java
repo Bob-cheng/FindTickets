@@ -12,7 +12,7 @@ import space.bobcheng.myapplication.jsonClass.AddRecInfo;
 
 public interface IAddCertainAPIService {
     @FormUrlEncoded
-    @POST("http://23.83.231.104:8080/addcertain")
+    @POST("addcertain")
     Call<AddRecInfo> addCertain(@Field("email") String email, @Field("start_from") String start_from,
                                 @Field("end_to") String end_to, @Field("date") String date,
                                 @Field("start_time") String start_time, @Field("end_time") String end_time,

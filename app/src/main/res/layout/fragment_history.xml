@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="             还没有记录哦...\n查票后点击右上角可添加记录\n         长按记录可以删除"
+        android:text="                      还没有记录哦...\n查票后点击右上角或长按可添加记录\n                长按记录可以删除"
         />
 
     <android.support.v4.widget.SwipeRefreshLayout
