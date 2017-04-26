@@ -10,9 +10,9 @@ import space.bobcheng.myapplication.jsonClass.MyQuery;
  */
 //retrofit的查询接口
 public interface ItrainQueryAPIService{
-    @GET("query")
-    Call<MyQuery> getTicketInfo(@Query("leftTicketDTO.train_date") String date,
-                                @Query("leftTicketDTO.from_station") String from,
-                                @Query("leftTicketDTO.to_station") String to,
+    @GET("12306")
+    Call<MyQuery> getTicketInfo(@Query("train_date") String date,
+                                @Query("from_station") String from,
+                                @Query("to_station") String to,
                                 @Query("purpose_codes") String type);
 }

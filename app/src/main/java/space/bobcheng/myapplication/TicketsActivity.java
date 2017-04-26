@@ -1,8 +1,10 @@
 package space.bobcheng.myapplication;
 
+import android.app.Service;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -48,7 +50,7 @@ import static space.bobcheng.myapplication.MyUtlis.UnsafeHttp.getUnsafeOkHttpCli
 public class TicketsActivity extends AppCompatActivity {
     private CheckBox [] boxs = new CheckBox[6];
     private MyQuery query = null;
-    private static final String BASE_URL = "https://kyfw.12306.cn/otn/leftTicket/";
+    private static final String BASE_URL = "http://23.83.231.104:8080/";
     private ConstraintLayout mprocess_layout;
     private Toolbar toolbar;
     private Retrofit retrofit;
@@ -58,6 +60,7 @@ public class TicketsActivity extends AppCompatActivity {
     private ProgressBar adding;
     private ListView mTicketsListView;
     private int isLeftTicket = 0;
+    private Vibrator vibrator = MainActivity.vibrator;
     private View.OnClickListener reconnect = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -82,6 +85,7 @@ public class TicketsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tickets);
+
         mprocess_layout = (ConstraintLayout) findViewById(R.id.process_layout);
         mframeLayout  = (FrameLayout) findViewById(R.id.frame_layout);
         mTicketsListView = (ListView) findViewById(R.id.ticket_list);
@@ -133,11 +137,16 @@ public class TicketsActivity extends AppCompatActivity {
         //http://square.github.io/retrofit/
         //http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/1016/3588.html
         //为了解决ssl证书的问题，这里创建的client可以信任所有证书。
+//        retrofit = new Retrofit.Builder()
+//                .baseUrl(BASE_URL)
+//                .client(getUnsafeOkHttpClient())
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .client(getUnsafeOkHttpClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+
         query_date.setText(inputMessage.get(2));
         initMyQuery();
     }
@@ -297,6 +306,7 @@ public class TicketsActivity extends AppCompatActivity {
         mTicketsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                vibrator.vibrate(500);
                 String[] message = new String[16];
                 Map<String, Object> certain_item = listItems.get(position);
                 message[0] = MainActivity.myemail;
@@ -331,6 +341,7 @@ public class TicketsActivity extends AppCompatActivity {
     private void initMyQuery(){
         ItrainQueryAPIService trainApiService = retrofit.create(ItrainQueryAPIService.class);
         Call<MyQuery> call = trainApiService.getTicketInfo(inputMessage.get(2), inputMessage.get(0), inputMessage.get(1),inputMessage.get(3));
+        Log.i("string", inputMessage.get(2)+inputMessage.get(0)+inputMessage.get(1)+inputMessage.get(3));
         call.enqueue(new Callback<MyQuery>() {
             @Override
             public void onResponse(Call<MyQuery> call, Response<MyQuery> response) {
@@ -339,10 +350,11 @@ public class TicketsActivity extends AppCompatActivity {
                     query = response.body();
                     trainsData = query.getData();
                     makeLists(true);
-                    mprocess_layout.setVisibility(View.INVISIBLE);
                 }catch (Exception e){
-                    Log.e("Status", "start to queryx");
-                    initMyQuery_x();
+                    Snackbar.make(mframeLayout, "服务器数据异常，请稍后再试", Snackbar.LENGTH_LONG)
+                            .setAction("重试", reconnect).show();
+                }finally {
+                    mprocess_layout.setVisibility(View.INVISIBLE);
                 }
             }
             @Override
@@ -354,7 +366,7 @@ public class TicketsActivity extends AppCompatActivity {
             }
         });
     }
-    //有时候获取的api只有queryx才生效。。。
+    /*//有时候获取的api只有queryx才生效。。。
     private void initMyQuery_x(){
         ItrainQueryAPIService_x trainApiService = retrofit.create(ItrainQueryAPIService_x.class);
         Call<MyQuery> call = trainApiService.getTicketInfo(inputMessage.get(2), inputMessage.get(0), inputMessage.get(1),inputMessage.get(3));
@@ -380,7 +392,7 @@ public class TicketsActivity extends AppCompatActivity {
                 mprocess_layout.setVisibility(View.INVISIBLE);
             }
         });
-    }
+    }*/
 
     //初始化单选框的逻辑
     private void initCheckBoxs (){

@@ -1,8 +1,10 @@
 package space.bobcheng.myapplication;
 
+import android.app.Service;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
     private BottomNavigationView navigation;
     private ViewPager mViewpager;
     protected ProgressBar progressBar;
+    protected static Vibrator vibrator;
     private long firstTime = 0;
     private ArrayList<Fragment> mViews = new ArrayList<>();
     public static String myusername;// = "czy@gmail.com";//debug 先写死
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        vibrator = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
         getPlaceMap();
         getReversePlacemap();
         sayHello(); //debug 暂时不用调用

@@ -2,10 +2,12 @@ package space.bobcheng.myapplication;
 
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.SwipeDismissBehavior;
@@ -56,6 +58,7 @@ public class HistoryFragment extends Fragment {
     protected MainActivity myMainActivity;
     protected TextView no_historyHint;
     protected SwipeRefreshLayout refreshLayout;
+    private Vibrator vibrator = MainActivity.vibrator;
     protected SwipeRefreshLayout.OnRefreshListener refreshListener= new
             SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -153,6 +156,7 @@ public class HistoryFragment extends Fragment {
                             @Override
                             public void onItemLongClick(View view) {
                                 //长按删除
+                                vibrator.vibrate(500);
                                 int position = mRecyclerView.getChildAdapterPosition(view);
                                 myRecyclerAdapter.removeItem(position);
                             }
