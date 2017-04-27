@@ -145,11 +145,21 @@ public class HistoryFragment extends Fragment {
                             @Override
                             public void onItemClick(View view) {
                                 int pos = mRecyclerView.getChildAdapterPosition(view);
-                                Record record = myRecyclerAdapter.records.get(pos);
-                                String date = record.getDate();
-                                String start = record.getStartFrom();
-                                String end = record.getEndTo();
-                                String type = record.getTicketType();
+                                String date, start, end, type;
+                                if(pos < myRecyclerAdapter.records.size()){
+                                    Record record = myRecyclerAdapter.records.get(pos);
+                                    date = record.getDate();
+                                    start = record.getStartFrom();
+                                    end = record.getEndTo();
+                                    type = record.getTicketType();
+                                }else {
+                                    CertainRecord certainRecord = myRecyclerAdapter.certainRecords
+                                            .get(pos - myRecyclerAdapter.records.size());
+                                    date = certainRecord.getDate();
+                                    start = certainRecord.getStartFrom();
+                                    end = certainRecord.getEndTo();
+                                    type = certainRecord.getTicketType();
+                                }
                                 launchTicketsActivity(start, end, date, type);
                             }
 
@@ -234,7 +244,8 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
 
 
     protected void removeItem(final int pos){
-        ((HistoryFragment)myFragment).myMainActivity.progressBar.setVisibility(View.VISIBLE);
+        //((HistoryFragment)myFragment).myMainActivity.progressBar.setVisibility(View.VISIBLE);
+        ((HistoryFragment)myFragment).refreshLayout.setRefreshing(true);
         final int position = pos;
         Call<Map<String, Boolean>> call;
         if(position < records.size()){
@@ -251,7 +262,8 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
         call.enqueue(new Callback<Map<String, Boolean>>() {
             @Override
             public void onResponse(Call<Map<String, Boolean>> call, Response<Map<String, Boolean>> response) {
-                ((HistoryFragment)myFragment).myMainActivity.progressBar.setVisibility(View.INVISIBLE);
+                //((HistoryFragment)myFragment).myMainActivity.progressBar.setVisibility(View.INVISIBLE);
+                ((HistoryFragment)myFragment).refreshLayout.setRefreshing(false);
                 try{
                     Map<String, Boolean> result = response.body();
                     if(result.get("status")){
@@ -281,7 +293,8 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
 
             @Override
             public void onFailure(Call<Map<String, Boolean>> call, Throwable t) {
-                ((HistoryFragment)myFragment).myMainActivity.progressBar.setVisibility(View.INVISIBLE);
+                //((HistoryFragment)myFragment).myMainActivity.progressBar.setVisibility(View.INVISIBLE);
+                ((HistoryFragment)myFragment).refreshLayout.setRefreshing(false);
                 Toast.makeText(mContext, "请检查网络连接", Toast.LENGTH_LONG).show();
                 Log.e("removeItem", t.toString());
             }
@@ -314,6 +327,7 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
         }else {
             View view = LayoutInflater.from(mContext).inflate(R.layout.ticket_item, viewGroup, false);
             view.setOnLongClickListener(this);
+            view.setOnClickListener(this);
             return new MyCertainViewHolder(view);
         }
 

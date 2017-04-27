@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import retrofit2.Call;
@@ -33,11 +34,13 @@ public class SignInActivity extends AppCompatActivity {
     private ConstraintLayout activitymain;
     private Retrofit retrofit;
     private Button mButton;
+    private LinearLayout logging;
     private static final String BASE_URL = SignUpActivity.BASE_URL;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        logging = (LinearLayout) findViewById(R.id.logging);
         myusername = (EditText)findViewById(R.id.username);
         mypassword = (EditText)findViewById(R.id.passwd);
         activitymain = (ConstraintLayout) findViewById(R.id.activity_main);
@@ -100,7 +103,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void signIn(String email, String password){
-
+        logging.setVisibility(View.VISIBLE);
         IsignInAPIService isignInAPIService = retrofit.create(IsignInAPIService.class);
         Call<SignInInfo> call  = isignInAPIService.sign_in(email, password);
         call.enqueue(new Callback<SignInInfo>() {
@@ -132,6 +135,8 @@ public class SignInActivity extends AppCompatActivity {
                     }
                 }catch (Exception e){
                     Log.e("sign_in_error", e.toString());
+                }finally {
+                    logging.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -145,6 +150,7 @@ public class SignInActivity extends AppCompatActivity {
                                 mButton.callOnClick();
                             }
                         }).show();
+                logging.setVisibility(View.INVISIBLE);
             }
         });
 

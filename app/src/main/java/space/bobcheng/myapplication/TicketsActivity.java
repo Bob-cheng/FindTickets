@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
@@ -51,7 +52,7 @@ public class TicketsActivity extends AppCompatActivity {
     private ArrayList<String> inputMessage;
     private FrameLayout mframeLayout;
     private List<Datum> trainsData = null;
-    private ProgressBar adding;
+    private LinearLayout adding;
     private ListView mTicketsListView;
     private int isLeftTicket = 0;
     private Vibrator vibrator = MainActivity.vibrator;
@@ -84,7 +85,7 @@ public class TicketsActivity extends AppCompatActivity {
         mframeLayout  = (FrameLayout) findViewById(R.id.frame_layout);
         mTicketsListView = (ListView) findViewById(R.id.ticket_list);
         TextView query_date = (TextView) findViewById(R.id.query_date);
-        adding = (ProgressBar) findViewById(R.id.adding);
+        adding = (LinearLayout) findViewById(R.id.adding);
 
 
         toolbar = (Toolbar) findViewById(R.id.tickets_toolbar);

@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
     public static HashMap<String, String> reversePlaceMap;
     private BottomNavigationView navigation;
     private ViewPager mViewpager;
-    protected ProgressBar progressBar;
     protected static Vibrator vibrator;
     private long firstTime = 0;
     private ArrayList<Fragment> mViews = new ArrayList<>();
@@ -64,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
         getPlaceMap();
         getReversePlacemap();
         sayHello(); //debug 暂时不用调用
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mViewpager = (ViewPager) findViewById(R.id.content);
@@ -76,8 +74,6 @@ public class MainActivity extends AppCompatActivity implements HistoryFragment.M
         mViews.clear();
         mViews.add(checkfragment);
         mViews.add(historyFragment);
-
-        progressBar.setVisibility(View.INVISIBLE);
 
 
         toolbar.setTitle("");

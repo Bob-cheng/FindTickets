@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Map;
@@ -31,6 +32,7 @@ import static space.bobcheng.myapplication.MyUtlis.MD5.getMd5;
 import static space.bobcheng.myapplication.MyUtlis.UnsafeHttp.getUnsafeOkHttpClient;
 
 public class SignUpActivity extends AppCompatActivity {
+    private LinearLayout signupping;
     private EditText username;
     private EditText email;
     private EditText passwd;
@@ -44,6 +46,7 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        signupping = (LinearLayout)findViewById(R.id.signupping);
         root_layout = (ConstraintLayout)findViewById(R.id.root_layout);
         root_layout.setFocusable(true);
         root_layout.setFocusableInTouchMode(true);
@@ -54,9 +57,8 @@ public class SignUpActivity extends AppCompatActivity {
         passwd_again = (EditText)findViewById(R.id.passwd_again);
         backToSignIn = (TextView)findViewById(R.id.sign_in);
         mSubmmit = (Button) findViewById(R.id.button);
-        TextView to_sign_in = (TextView) findViewById(R.id.sign_in);
 
-        to_sign_in.setOnClickListener(new View.OnClickListener() {
+        backToSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent toSignIn = new Intent(SignUpActivity.this, SignInActivity.class);
@@ -151,6 +153,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void toSignUp(String username, String email, String pwd){
+        signupping.setVisibility(View.VISIBLE);
         IsignUpAPIService isignUpAPIService = retrofit.create(IsignUpAPIService.class);
         Call<SignUpInfo> call = isignUpAPIService.sign_up(username, email, pwd);
         // map的结构
@@ -182,10 +185,13 @@ public class SignUpActivity extends AppCompatActivity {
                                     mSubmmit.callOnClick();
                                 }
                             }).show();
+                }finally {
+                    signupping.setVisibility(View.INVISIBLE);
                 }
             }
             @Override
             public void onFailure(Call<SignUpInfo> call, Throwable t) {
+                signupping.setVisibility(View.INVISIBLE);
                 Log.e("network_error", t.toString());
                 Snackbar.make(root_layout, "网络连接失败，请重试", Snackbar.LENGTH_LONG)
                         .setAction("重试", new View.OnClickListener() {
