@@ -13,9 +13,6 @@ import retrofit2.Retrofit;
 
 public class ToStringConverterFactory extends Converter.Factory {
     private static final MediaType MEDIA_TYPE = MediaType.parse("text/plain");
-
-
-
     @Override
     public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
         if (String.class.equals(type)) {
@@ -27,7 +24,6 @@ public class ToStringConverterFactory extends Converter.Factory {
         }
         return null;
     }
-
     @Override
     public Converter<?, RequestBody> requestBodyConverter(Type type, Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
         if (String.class.equals(type)) {

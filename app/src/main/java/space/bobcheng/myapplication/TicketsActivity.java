@@ -132,11 +132,11 @@ public class TicketsActivity extends AppCompatActivity {
         //http://square.github.io/retrofit/
         //http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/1016/3588.html
         //为了解决ssl证书的问题，这里创建的client可以信任所有证书。
-//        retrofit = new Retrofit.Builder()
-//                .baseUrl(BASE_URL)
-//                .client(getUnsafeOkHttpClient())
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
+        /*retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(getUnsafeOkHttpClient())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();*/
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())

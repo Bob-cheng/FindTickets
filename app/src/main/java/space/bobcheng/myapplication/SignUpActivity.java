@@ -41,7 +41,7 @@ public class SignUpActivity extends AppCompatActivity {
     private Button mSubmmit;
     private ConstraintLayout root_layout;
     private Retrofit retrofit;
-    protected static final String BASE_URL = "http://bobcheng.space:8080/";
+    protected static final String BASE_URL = "http://tickets.bobcheng.space/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

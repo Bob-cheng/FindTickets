@@ -2,15 +2,12 @@ package space.bobcheng.myapplication;
 
 
 import android.app.Activity;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.SwipeDismissBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -39,6 +36,8 @@ import space.bobcheng.myapplication.jsonClass.CertainRecord;
 import space.bobcheng.myapplication.jsonClass.MyRecord;
 import space.bobcheng.myapplication.jsonClass.Record;
 
+import static space.bobcheng.myapplication.MainActivity.vibrator;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +57,6 @@ public class HistoryFragment extends Fragment {
     protected MainActivity myMainActivity;
     protected TextView no_historyHint;
     protected SwipeRefreshLayout refreshLayout;
-    private Vibrator vibrator = MainActivity.vibrator;
     protected SwipeRefreshLayout.OnRefreshListener refreshListener= new
             SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -165,8 +163,6 @@ public class HistoryFragment extends Fragment {
 
                             @Override
                             public void onItemLongClick(View view) {
-                                //长按删除
-                                vibrator.vibrate(100);
                                 int position = mRecyclerView.getChildAdapterPosition(view);
                                 myRecyclerAdapter.removeItem(position);
                             }
@@ -218,7 +214,7 @@ public class HistoryFragment extends Fragment {
 class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener, View.OnLongClickListener{
     private HashMap<String, String> reversePlaceMap = MainActivity.reversePlaceMap;
     //自定义监听事件
-    public static interface OnRecyclerViewItemClickListener {
+    public interface OnRecyclerViewItemClickListener {
         void onItemClick(View view);
         void onItemLongClick(View view);
     }
@@ -268,7 +264,8 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> im
                     Map<String, Boolean> result = response.body();
                     if(result.get("status")){
                         Toast.makeText(mContext, "删除成功", Toast.LENGTH_LONG).show();
-
+                        //长按删除
+                        vibrator.vibrate(100);
                         if(position < records.size()){
                             records.remove(position);
                         }else {
